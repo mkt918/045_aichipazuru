@@ -1,66 +1,66 @@
 {
   "color_city_01.png": {
-    "x": 1875,
-    "y": 570,
+    "x": 1888,
+    "y": 576,
     "width": 319,
     "height": 344,
-    "matchScore": 98.43,
+    "matchScore": 98.54,
     "error": false
   },
   "color_city_02.png": {
-    "x": 1920,
-    "y": 795,
+    "x": 1728,
+    "y": 704,
     "width": 661,
     "height": 491,
-    "matchScore": 99.63,
+    "matchScore": 99.8,
     "error": false
   },
   "color_city_03.png": {
-    "x": 1755,
-    "y": 555,
+    "x": 1808,
+    "y": 544,
     "width": 352,
     "height": 372,
-    "matchScore": 98.8,
+    "matchScore": 98.92,
     "error": false
   },
   "color_city_04.png": {
-    "x": 1920,
-    "y": 555,
+    "x": 736,
+    "y": 448,
     "width": 139,
     "height": 194,
-    "matchScore": 94.99,
+    "matchScore": 97.56,
     "error": false
   },
   "color_city_05.png": {
-    "x": 1845,
-    "y": 555,
+    "x": 1848,
+    "y": 552,
     "width": 222,
     "height": 275,
-    "matchScore": 97.52,
+    "matchScore": 97.85,
     "error": false
   },
   "color_city_06.png": {
-    "x": 1860,
-    "y": 615,
+    "x": 1824,
+    "y": 608,
     "width": 553,
     "height": 515,
-    "matchScore": 99.42,
+    "matchScore": 99.48,
     "error": false
   },
   "color_city_07.png": {
-    "x": 1905,
-    "y": 570,
+    "x": 1856,
+    "y": 576,
     "width": 256,
     "height": 261,
-    "matchScore": 97.1,
+    "matchScore": 98.61,
     "error": false
   },
   "color_city_08.png": {
-    "x": 1485,
-    "y": 735,
+    "x": 1536,
+    "y": 736,
     "width": 869,
     "height": 868,
-    "matchScore": 99.53,
+    "matchScore": 99.8,
     "error": false
   },
   "color_city_09.png": {
@@ -72,19 +72,19 @@
     "error": false
   },
   "color_city_10.png": {
-    "x": 1650,
-    "y": 660,
+    "x": 1666,
+    "y": 619,
     "width": 525,
     "height": 322,
-    "matchScore": 99.09,
+    "matchScore": 99.03,
     "error": false
   },
   "color_city_11.png": {
-    "x": 735,
-    "y": 480,
+    "x": 864,
+    "y": 1760,
     "width": 152,
     "height": 147,
-    "matchScore": 93.24,
+    "matchScore": 96.97,
     "error": false
   },
   "color_city_12.png": {
@@ -96,43 +96,43 @@
     "error": false
   },
   "color_city_13.png": {
-    "x": 2400,
-    "y": 1485,
+    "x": 2409,
+    "y": 1479,
     "width": 438,
     "height": 411,
     "matchScore": 98.45,
     "error": false
   },
   "color_city_14.png": {
-    "x": 2595,
-    "y": 1485,
+    "x": 2624,
+    "y": 1472,
     "width": 351,
     "height": 307,
-    "matchScore": 98.73,
+    "matchScore": 100,
     "error": false
   },
   "color_city_15.png": {
     "x": 2400,
-    "y": 1515,
+    "y": 1504,
     "width": 372,
     "height": 480,
-    "matchScore": 99.19,
+    "matchScore": 99.24,
     "error": false
   },
   "color_city_16.png": {
-    "x": 2460,
-    "y": 1485,
+    "x": 192,
+    "y": 320,
     "width": 309,
     "height": 310,
-    "matchScore": 98.47,
+    "matchScore": 100,
     "error": false
   },
   "color_city_17.png": {
-    "x": 2460,
-    "y": 1485,
+    "x": 224,
+    "y": 320,
     "width": 274,
     "height": 297,
-    "matchScore": 98.27,
+    "matchScore": 99,
     "error": false
   },
   "color_city_18.png": {
@@ -144,91 +144,91 @@
     "error": false
   },
   "color_city_19.png": {
-    "x": 270,
-    "y": 270,
+    "x": 864,
+    "y": 136,
     "width": 220,
     "height": 221,
-    "matchScore": 95.45,
+    "matchScore": 92.55,
     "error": false
   },
   "color_city_20.png": {
-    "x": 2475,
-    "y": 1470,
+    "x": 2528,
+    "y": 1472,
     "width": 337,
     "height": 461,
-    "matchScore": 98.56,
+    "matchScore": 99.33,
     "error": false
   },
   "color_city_21.png": {
-    "x": 300,
-    "y": 270,
+    "x": 288,
+    "y": 288,
     "width": 252,
     "height": 154,
-    "matchScore": 96.34,
+    "matchScore": 97.1,
     "error": false
   },
   "color_city_22.png": {
-    "x": 2490,
-    "y": 1485,
+    "x": 832,
+    "y": 128,
     "width": 274,
     "height": 275,
-    "matchScore": 97.79,
+    "matchScore": 97.67,
     "error": false
   },
   "color_city_23.png": {
-    "x": 915,
-    "y": 105,
+    "x": 936,
+    "y": 88,
     "width": 94,
     "height": 110,
-    "matchScore": 96.57,
+    "matchScore": 98.42,
     "error": false
   },
   "color_city_24.png": {
-    "x": 2381,
-    "y": 1514,
+    "x": 2400,
+    "y": 1568,
     "width": 554,
     "height": 470,
-    "matchScore": 99.24,
+    "matchScore": 99.16,
     "error": false
   },
   "color_city_25.png": {
-    "x": 2460,
-    "y": 1455,
+    "x": 2472,
+    "y": 1440,
     "width": 427,
     "height": 442,
-    "matchScore": 99.3,
+    "matchScore": 99.33,
     "error": false
   },
   "color_city_26.png": {
-    "x": 2820,
-    "y": 945,
+    "x": 2656,
+    "y": 960,
     "width": 206,
     "height": 262,
-    "matchScore": 96.87,
+    "matchScore": 98.75,
     "error": false
   },
   "color_city_27.png": {
-    "x": 2865,
-    "y": 855,
+    "x": 2840,
+    "y": 856,
     "width": 279,
     "height": 451,
-    "matchScore": 97.91,
+    "matchScore": 98.34,
     "error": false
   },
   "color_city_28.png": {
-    "x": 2985,
-    "y": 870,
+    "x": 2992,
+    "y": 864,
     "width": 212,
     "height": 204,
-    "matchScore": 96.35,
+    "matchScore": 97.3,
     "error": false
   },
   "color_city_29.png": {
-    "x": 870,
-    "y": 585,
+    "x": 1088,
+    "y": 480,
     "width": 218,
     "height": 163,
-    "matchScore": 96.2,
+    "matchScore": 97.87,
     "error": false
   },
   "color_city_30.png": {
@@ -240,35 +240,35 @@
     "error": false
   },
   "color_city_31.png": {
-    "x": 2970,
-    "y": 855,
+    "x": 832,
+    "y": 544,
     "width": 225,
     "height": 266,
-    "matchScore": 96.22,
+    "matchScore": 97.01,
     "error": false
   },
   "color_city_32.png": {
-    "x": 3000,
-    "y": 885,
+    "x": 2976,
+    "y": 896,
     "width": 238,
     "height": 187,
-    "matchScore": 94.94,
+    "matchScore": 98,
     "error": false
   },
   "color_city_33.png": {
-    "x": 2865,
-    "y": 885,
+    "x": 2856,
+    "y": 888,
     "width": 273,
     "height": 350,
-    "matchScore": 98.08,
+    "matchScore": 98.53,
     "error": false
   },
   "color_city_34.png": {
-    "x": 1155,
-    "y": 405,
+    "x": 1152,
+    "y": 384,
     "width": 105,
     "height": 129,
-    "matchScore": 93.53,
+    "matchScore": 93.75,
     "error": false
   },
   "color_city_35.png": {
@@ -280,59 +280,59 @@
     "error": false
   },
   "color_city_36.png": {
-    "x": 1590,
-    "y": 1575,
+    "x": 2720,
+    "y": 960,
     "width": 330,
     "height": 471,
-    "matchScore": 98.86,
+    "matchScore": 99.03,
     "error": false
   },
   "color_city_37.png": {
-    "x": 855,
-    "y": 585,
+    "x": 1824,
+    "y": 1760,
     "width": 210,
     "height": 214,
-    "matchScore": 95.14,
+    "matchScore": 95.38,
     "error": false
   },
   "color_city_38.png": {
-    "x": 1155,
-    "y": 375,
+    "x": 1152,
+    "y": 376,
     "width": 180,
     "height": 279,
-    "matchScore": 95.82,
+    "matchScore": 95.99,
     "error": false
   },
   "color_city_39.png": {
-    "x": 1140,
-    "y": 360,
+    "x": 1152,
+    "y": 352,
     "width": 135,
     "height": 168,
-    "matchScore": 97.99,
+    "matchScore": 100,
     "error": false
   },
   "color_city_40.png": {
-    "x": 1755,
-    "y": 1680,
+    "x": 1752,
+    "y": 1678,
     "width": 557,
     "height": 485,
     "matchScore": 99.1,
     "error": false
   },
   "color_city_41.png": {
-    "x": 885,
-    "y": 570,
+    "x": 1107,
+    "y": 380,
     "width": 191,
     "height": 207,
-    "matchScore": 95.82,
+    "matchScore": 95.6,
     "error": false
   },
   "color_city_42.png": {
-    "x": 2235,
-    "y": 2490,
+    "x": 3200,
+    "y": 768,
     "width": 387,
     "height": 274,
-    "matchScore": 97.26,
+    "matchScore": 98.15,
     "error": false
   },
   "color_city_43.png": {
@@ -344,51 +344,51 @@
     "error": false
   },
   "color_city_44.png": {
-    "x": 982,
-    "y": 2036,
+    "x": 2050,
+    "y": 2480,
     "width": 647,
     "height": 541,
-    "matchScore": 100,
+    "matchScore": 94.22,
     "error": false
   },
   "color_city_45.png": {
     "x": 2400,
-    "y": 2460,
+    "y": 2464,
     "width": 225,
     "height": 511,
-    "matchScore": 98.64,
+    "matchScore": 99.35,
     "error": false
   },
   "color_city_46.png": {
-    "x": 2220,
-    "y": 2475,
+    "x": 2304,
+    "y": 2368,
     "width": 288,
     "height": 473,
-    "matchScore": 99.17,
+    "matchScore": 98.03,
     "error": false
   },
   "color_city_47.png": {
-    "x": 2325,
-    "y": 2445,
+    "x": 3232,
+    "y": 800,
     "width": 284,
     "height": 383,
-    "matchScore": 98.33,
+    "matchScore": 98.5,
     "error": false
   },
   "color_city_48.png": {
-    "x": 1335,
-    "y": 555,
+    "x": 1376,
+    "y": 512,
     "width": 121,
     "height": 222,
     "matchScore": 100,
     "error": false
   },
   "color_city_49.png": {
-    "x": 3240,
-    "y": 825,
+    "x": 1312,
+    "y": 704,
     "width": 313,
     "height": 234,
-    "matchScore": 98.13,
+    "matchScore": 100,
     "error": false
   },
   "color_city_50.png": {
@@ -400,72 +400,72 @@
     "error": false
   },
   "color_city_51.png": {
-    "x": 1335,
-    "y": 555,
+    "x": 1120,
+    "y": 2272,
     "width": 208,
     "height": 158,
-    "matchScore": 94.13,
+    "matchScore": 98.25,
     "error": false
   },
   "color_city_52.png": {
-    "x": 2135,
-    "y": 2724,
+    "x": 2136,
+    "y": 2720,
     "width": 512,
     "height": 324,
-    "matchScore": 98.89,
+    "matchScore": 98.98,
     "error": false
   },
   "color_city_53.png": {
-    "x": 2167,
-    "y": 2511,
+    "x": 2176,
+    "y": 2528,
     "width": 447,
     "height": 481,
-    "matchScore": 99.39,
+    "matchScore": 99.42,
     "error": false
   },
   "color_city_54.png": {
-    "x": 3210,
-    "y": 795,
+    "x": 1312,
+    "y": 544,
     "width": 211,
     "height": 308,
-    "matchScore": 97.93,
+    "matchScore": 97.78,
     "error": false
   },
   "color_city_55.png": {
-    "x": 465,
-    "y": 1500,
+    "x": 640,
+    "y": 1376,
     "width": 37,
     "height": 68,
     "matchScore": 100,
     "error": false
   },
   "color_city_56.png": {
-    "x": 465,
-    "y": 1500,
+    "x": 640,
+    "y": 1408,
     "width": 51,
     "height": 30,
     "matchScore": 100,
     "error": false
   },
   "color_city_57.png": {
-    "x": 459,
-    "y": 1498,
+    "x": 464,
+    "y": 1504,
     "width": 70,
     "height": 67,
     "matchScore": 100,
     "error": false
   },
   "color_city_58.png": {
-    "x": 465,
-    "y": 1500,
+    "x": 480,
+    "y": 1504,
     "width": 33,
     "height": 55,
     "matchScore": 100,
     "error": false
   },
   "color_city_59.png": {
-    "x": 465,
-    "y": 1500,
+    "x": 640,
+    "y": 1408,
     "width": 36,
     "height": 39,
     "matchScore": 100,
@@ -480,40 +480,40 @@
     "error": false
   },
   "color_city_61.png": {
-    "x": 465,
-    "y": 1500,
+    "x": 640,
+    "y": 1408,
     "width": 41,
     "height": 51,
     "matchScore": 100,
     "error": false
   },
   "color_city_62.png": {
-    "x": 461,
-    "y": 1502,
+    "x": 448,
+    "y": 1504,
     "width": 65,
     "height": 79,
     "matchScore": 100,
     "error": false
   },
   "color_city_63.png": {
-    "x": 458,
-    "y": 1498,
+    "x": 448,
+    "y": 1504,
     "width": 91,
     "height": 89,
     "matchScore": 100,
     "error": false
   },
   "color_city_64.png": {
-    "x": 465,
-    "y": 1500,
+    "x": 448,
+    "y": 1504,
     "width": 51,
     "height": 80,
     "matchScore": 100,
     "error": false
   },
   "color_city_65.png": {
-    "x": 465,
-    "y": 1500,
+    "x": 640,
+    "y": 1408,
     "width": 51,
     "height": 84,
     "matchScore": 100,

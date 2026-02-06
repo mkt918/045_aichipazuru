@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +40,7 @@
             border: 3px solid #4a4a6a;
             border-radius: 12px;
             background-color: #0f0f1e;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
         #puzzle-canvas {
@@ -48,8 +49,8 @@
             height: 100%;
             overflow: auto;
             background:
-                repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, transparent 1px, transparent 20px, rgba(255,255,255,0.03) 21px),
-                repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, transparent 1px, transparent 20px, rgba(255,255,255,0.03) 21px);
+                repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, transparent 1px, transparent 20px, rgba(255, 255, 255, 0.03) 21px),
+                repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0px, transparent 1px, transparent 20px, rgba(255, 255, 255, 0.03) 21px);
         }
 
         #workspace {
@@ -75,11 +76,11 @@
             cursor: grab;
             transition: filter 0.2s, transform 0.15s;
             z-index: 10;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
         }
 
         .puzzle-piece:hover {
-            filter: drop-shadow(0 4px 12px rgba(100,200,255,0.6));
+            filter: drop-shadow(0 4px 12px rgba(100, 200, 255, 0.6));
         }
 
         .puzzle-piece:active {
@@ -90,7 +91,7 @@
         .puzzle-piece.locked {
             cursor: default;
             opacity: 0.9;
-            filter: drop-shadow(0 0 8px rgba(0,255,100,0.5));
+            filter: drop-shadow(0 0 8px rgba(0, 255, 100, 0.5));
         }
 
         .puzzle-piece.snapping {
@@ -98,9 +99,17 @@
         }
 
         @keyframes snap {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         /* サイドバー */
@@ -112,7 +121,7 @@
             display: flex;
             flex-direction: column;
             color: white;
-            box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
         }
 
         #sidebar-header {
@@ -128,8 +137,8 @@
         }
 
         .stat-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 16px;
@@ -137,7 +146,7 @@
         }
 
         .stat-card:hover {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             transform: translateY(-2px);
         }
 
@@ -181,25 +190,25 @@
         }
 
         .btn-secondary {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .btn-secondary:hover {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .level-btn.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: 2px solid rgba(255,255,255,0.4);
+            border: 2px solid rgba(255, 255, 255, 0.4);
         }
 
         /* プログレスバー */
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
             overflow: hidden;
             margin-top: 12px;
@@ -219,7 +228,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.9);
             display: none;
             justify-content: center;
             align-items: center;
@@ -232,8 +241,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .completion-content {
@@ -247,6 +261,7 @@
                 opacity: 0;
                 transform: translateY(50px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -282,7 +297,7 @@
             width: 40px;
             height: 40px;
             background: rgba(26, 26, 46, 0.9);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             color: white;
             font-size: 20px;
@@ -456,10 +471,12 @@
                 transform: scale(0.5);
                 opacity: 0;
             }
+
             50% {
                 transform: scale(1.2);
                 opacity: 1;
             }
+
             100% {
                 transform: scale(1);
                 opacity: 1;
@@ -467,6 +484,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="game-container">
         <!-- パズルエリア -->
@@ -512,7 +530,8 @@
                 <div style="margin-top: 32px;">
                     <div class="stat-label" style="margin-bottom: 12px;">レベル選択</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <button class="btn btn-secondary level-btn active" data-level="1" style="padding: 12px; margin: 0;">
+                        <button class="btn btn-secondary level-btn active" data-level="1"
+                            style="padding: 12px; margin: 0;">
                             Level 1<br><span style="font-size: 11px; opacity: 0.7;">カラー</span>
                         </button>
                         <button class="btn btn-secondary level-btn" data-level="2" style="padding: 12px; margin: 0;">
@@ -539,11 +558,14 @@
                     <div class="stat-label" style="margin-bottom: 12px;">ズーム調整</div>
 
                     <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                        <button class="btn btn-secondary" id="zoom-in-sidebar" style="flex: 1; padding: 14px; margin: 0; font-size: 20px;">+</button>
-                        <button class="btn btn-secondary" id="zoom-out-sidebar" style="flex: 1; padding: 14px; margin: 0; font-size: 20px;">−</button>
+                        <button class="btn btn-secondary" id="zoom-in-sidebar"
+                            style="flex: 1; padding: 14px; margin: 0; font-size: 20px;">+</button>
+                        <button class="btn btn-secondary" id="zoom-out-sidebar"
+                            style="flex: 1; padding: 14px; margin: 0; font-size: 20px;">−</button>
                     </div>
 
-                    <div style="text-align: center; font-size: 24px; font-weight: bold; color: #667eea; font-family: 'Courier New', monospace;" id="zoom-display">20%</div>
+                    <div style="text-align: center; font-size: 24px; font-weight: bold; color: #667eea; font-family: 'Courier New', monospace;"
+                        id="zoom-display">30%</div>
                 </div>
 
                 <!-- 設定 -->
@@ -551,7 +573,8 @@
                     <div class="stat-label" style="margin-bottom: 12px;">設定</div>
 
                     <label style="display: flex; align-items: center; margin-bottom: 12px; cursor: pointer;">
-                        <input type="checkbox" id="auto-lock" checked style="margin-right: 8px; width: 18px; height: 18px;">
+                        <input type="checkbox" id="auto-lock" checked
+                            style="margin-right: 8px; width: 18px; height: 18px;">
                         <span style="font-size: 14px;">自動ロック</span>
                     </label>
 
@@ -626,7 +649,8 @@
                     ピースを移動します。正しい位置に近づくと自動的にスナップします。
                 </div>
 
-                <div style="font-size: 14px; font-weight: bold; color: #667eea; margin: 16px 0 10px 0;">🖱️ 画面移動（パン）</div>
+                <div style="font-size: 14px; font-weight: bold; color: #667eea; margin: 16px 0 10px 0;">🖱️ 画面移動（パン）
+                </div>
 
                 <div class="control-item">
                     <span class="control-key">空白を左クリック + ドラッグ</span><br>
@@ -695,4 +719,5 @@
 
     <script type="module" src="/src/jigsaw.js"></script>
 </body>
+
 </html>

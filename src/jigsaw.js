@@ -103,12 +103,12 @@ const LEVELS = {
 const gameState = {
   pieces: [],
   lockedPieces: new Set(),
-  currentScale: 0.2, // 初期ズーム20%
+  currentScale: 0.3, // 初期ズーム30% (ユーザー要望)
   startTime: null,
   timerInterval: null,
   isDragging: false,
   coordinates: null,
-  snapDistance: 50,
+  snapDistance: 200,
   autoLock: true,
   currentLevel: 1,
   unionFind: new UnionFind(),
@@ -383,8 +383,12 @@ function drag(e) {
   const scrollX = document.getElementById('puzzle-canvas').scrollLeft;
   const scrollY = document.getElementById('puzzle-canvas').scrollTop;
 
-  const baseX = (e.clientX - canvasRect.left) / gameState.currentScale + scrollX - offsetX;
-  const baseY = (e.clientY - canvasRect.top) / gameState.currentScale + scrollY - offsetY;
+  // ワークスペースのオフセットを取得（top: 50px, left: 50px）
+  const workspaceOffsetX = workspace.offsetLeft;
+  const workspaceOffsetY = workspace.offsetTop;
+
+  const baseX = (e.clientX - canvasRect.left + scrollX - workspaceOffsetX) / gameState.currentScale - offsetX;
+  const baseY = (e.clientY - canvasRect.top + scrollY - workspaceOffsetY) / gameState.currentScale - offsetY;
 
   // グループ内の全ピースを移動
   activeGroup.forEach(piece => {
