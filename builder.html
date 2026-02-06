@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aichi Puzzle Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #1a202c;
+            color: white;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            position: relative;
+            width: 100vw;
+            height: 80vh;
+            overflow: auto;
+            border: 2px solid #4a5568;
+            /* Grid background for better visibility */
+            background-color: #2d3748;
+            background-image: linear-gradient(#4a5568 1px, transparent 1px), linear-gradient(90deg, #4a5568 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        #workspace {
+            position: relative;
+            /* Default transform set in JS */
+            transform-origin: 0 0;
+            width: fit-content;
+        }
+
+        #map-layer {
+            position: relative;
+            /* Changed from absolute to give workspace size */
+            display: block;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .city-piece {
+            position: absolute;
+            cursor: grab;
+            z-index: 10;
+            filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+        }
+
+        .city-piece:active {
+            cursor: grabbing;
+            z-index: 100;
+        }
+
+        .city-piece.selected {
+            filter: drop-shadow(0 0 5px yellow);
+            border: 1px solid yellow;
+        }
+
+        #sidebar {
+            height: 20vh;
+            padding: 1rem;
+            background: #1a202c;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            overflow-x: auto;
+            border-top: 2px solid #4a5568;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvas-container">
+        <div id="workspace">
+            <img id="map-layer" src="/public/img/aichi_color_map.png" alt="Base Map" draggable="false">
+            <div id="pieces-layer"></div>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div class="flex flex-col gap-2 min-w-[200px]">
+            <h2 class="font-bold text-lg text-yellow-400">Builder Tools</h2>
+            <div class="flex gap-2">
+                <button id="save-btn"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-500 rounded font-bold transition">Save JSON</button>
+            </div>
+            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
+                <label>Map Opacity:</label>
+                <input type="range" id="opacity-slider" min="0" max="1" step="0.1" value="0.5">
+
+                <label>Zoom (<span id="scale-val">30%</span>):</label>
+                <input type="range" id="scale-slider" min="0.1" max="1.0" step="0.05" value="0.3">
+            </div>
+        </div>
+
+        <div id="status-box"
+            class="flex-grow bg-gray-800 p-2 rounded text-xs font-mono text-cyan-300 h-full overflow-y-auto">
+            Initializing...
+        </div>
+    </div>
+
+    <script type="module">
+        const CITY_COUNT = 65;
+        const workspace = document.getElementById('workspace');
+        const piecesLayer = document.getElementById('pieces-layer');
+        const mapImg = document.getElementById('map-layer');
+        const statusBox = document.getElementById('status-box');
+
+        let pieces = [];
+        let currentScale = 0.3; // Default scale requested by user
+
+        function log(msg) {
+            statusBox.innerText = `> ${msg}\n` + statusBox.innerText;
+        }
+
+        // Apply initial scale
+        workspace.style.transform = `scale(${currentScale})`;
+
+        // Load existing coordinates if available
+        let savedCoords = {};
+        try {
+            const resp = await fetch('/public/data/coordinates.json');
+            if (resp.ok) {
+                savedCoords = await resp.json();
+                log('Loaded existing coordinates.');
+            }
+        } catch (e) {
+            log('No existing coordinates found.');
+        }
+
+        // Initialize Pieces
+        for (let i = 1; i <= CITY_COUNT; i++) {
+            const id = `color_city_${String(i).padStart(2, '0')}.png`;
+            const img = document.createElement('img');
+            img.src = `/public/img/cities/${id}`;
+            img.className = 'city-piece';
+            img.id = id;
+            img.dataset.id = id;
+            img.draggable = false; // Disable native drag
+
+            // Initial pos
+            if (savedCoords[id] && !savedCoords[id].error && (savedCoords[id].x !== 0 || savedCoords[id].y !== 0)) {
+                img.style.left = savedCoords[id].x + 'px';
+                img.style.top = savedCoords[id].y + 'px';
+            } else {
+                // Scatter randomly but keep somewhat visible
+                img.style.left = (Math.random() * 1000) + 'px';
+                img.style.top = (Math.random() * 100) + 'px';
+            }
+
+            piecesLayer.appendChild(img);
+            makeDraggable(img);
+            pieces.push(img);
+        }
+
+        log(`Loaded ${CITY_COUNT} pieces.`);
+
+        // Drag Logic
+        let activePiece = null;
+        let startX, startY, initialLeft, initialTop;
+
+        function makeDraggable(el) {
+            el.addEventListener('mousedown', startDrag);
+        }
+
+        function startDrag(e) {
+            if (e.button !== 0) return; // Left click only
+            activePiece = e.target;
+
+            // Bring to front
+            piecesLayer.appendChild(activePiece);
+
+            startX = e.clientX;
+            startY = e.clientY;
+
+            // Parse current absolute position
+            initialLeft = parseFloat(activePiece.style.left || 0);
+            initialTop = parseFloat(activePiece.style.top || 0);
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+            activePiece.classList.add('selected');
+
+            log(`Selected: ${activePiece.id}`);
+        }
+
+        function drag(e) {
+            if (!activePiece) return;
+            e.preventDefault();
+
+            // Calculate delta in SCREEN pixels
+            const screenDx = e.clientX - startX;
+            const screenDy = e.clientY - startY;
+
+            // Convert to LOGICAL pixels by dividing by scale
+            const logicalDx = screenDx / currentScale;
+            const logicalDy = screenDy / currentScale;
+
+            activePiece.style.left = (initialLeft + logicalDx) + 'px';
+            activePiece.style.top = (initialTop + logicalDy) + 'px';
+        }
+
+        function endDrag() {
+            if (activePiece) {
+                activePiece.classList.remove('selected');
+                log(`Placed ${activePiece.id} at (${parseInt(activePiece.style.left)}, ${parseInt(activePiece.style.top)})`);
+            }
+            activePiece = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', endDrag);
+        }
+
+        // Opacity Slider
+        document.getElementById('opacity-slider').addEventListener('input', (e) => {
+            mapImg.style.opacity = e.target.value;
+        });
+
+        // Scale Slider
+        document.getElementById('scale-slider').addEventListener('input', (e) => {
+            currentScale = parseFloat(e.target.value);
+            document.getElementById('scale-val').innerText = Math.round(currentScale * 100) + '%';
+            workspace.style.transform = `scale(${currentScale})`;
+        });
+
+        // Save Function
+        document.getElementById('save-btn').addEventListener('click', () => {
+            const data = {};
+            pieces.forEach(p => {
+                data[p.dataset.id] = {
+                    x: Math.round(parseFloat(p.style.left)),
+                    y: Math.round(parseFloat(p.style.top)),
+                    width: p.naturalWidth,
+                    height: p.naturalHeight,
+                    error: false
+                };
+            });
+
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'coordinates.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            log('Generating JSON for download...');
+        });
+
+    </script>
+</body>
+
+</html>

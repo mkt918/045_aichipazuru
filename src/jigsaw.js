@@ -1,0 +1,980 @@
+// ========================================
+// 愛知県ジグソーパズルゲーム
+// ========================================
+
+// ========================================
+// Union-Find（グループ管理）
+// ========================================
+class UnionFind {
+  constructor() {
+    this.parent = new Map();
+    this.rank = new Map();
+  }
+
+  // ピースを追加
+  add(id) {
+    if (!this.parent.has(id)) {
+      this.parent.set(id, id);
+      this.rank.set(id, 0);
+    }
+  }
+
+  // ルート要素を取得
+  find(id) {
+    if (!this.parent.has(id)) {
+      this.add(id);
+    }
+    if (this.parent.get(id) !== id) {
+      this.parent.set(id, this.find(this.parent.get(id)));
+    }
+    return this.parent.get(id);
+  }
+
+  // 2つのグループを結合
+  union(id1, id2) {
+    const root1 = this.find(id1);
+    const root2 = this.find(id2);
+
+    if (root1 === root2) return false;
+
+    const rank1 = this.rank.get(root1);
+    const rank2 = this.rank.get(root2);
+
+    if (rank1 < rank2) {
+      this.parent.set(root1, root2);
+    } else if (rank1 > rank2) {
+      this.parent.set(root2, root1);
+    } else {
+      this.parent.set(root2, root1);
+      this.rank.set(root1, rank1 + 1);
+    }
+    return true;
+  }
+
+  // 同じグループに属するか
+  connected(id1, id2) {
+    return this.find(id1) === this.find(id2);
+  }
+
+  // グループのメンバーを取得
+  getGroup(id) {
+    const root = this.find(id);
+    const members = [];
+    for (const [memberId, _] of this.parent) {
+      if (this.find(memberId) === root) {
+        members.push(memberId);
+      }
+    }
+    return members;
+  }
+
+  // リセット
+  clear() {
+    this.parent.clear();
+    this.rank.clear();
+  }
+}
+
+// レベル設定
+const LEVELS = {
+  1: {
+    name: 'カラー',
+    backgroundImage: '/img/愛知県全図color.png',
+    piecesDir: '/color_cities/'
+  },
+  2: {
+    name: 'グレー',
+    backgroundImage: '/img/愛知県全図.png',
+    piecesDir: '/color_cities/' // ピースは同じ
+  },
+  3: {
+    name: 'ハード',
+    backgroundImage: '/img/hard.png',
+    piecesDir: '/color_cities/' // ピースは同じ
+  },
+  4: {
+    name: 'エクストラ',
+    backgroundImage: '/img/Ex.png',
+    piecesDir: '/color_cities/' // ピースは同じ
+  }
+};
+
+// ゲーム状態
+const gameState = {
+  pieces: [],
+  lockedPieces: new Set(),
+  currentScale: 0.2, // 初期ズーム20%
+  startTime: null,
+  timerInterval: null,
+  isDragging: false,
+  coordinates: null,
+  snapDistance: 50,
+  autoLock: true,
+  currentLevel: 1,
+  unionFind: new UnionFind(),
+  adjacencyMap: new Map(), // 隣接関係マップ
+  isPanning: false // パン中かどうか
+};
+
+// ドラッグ状態
+let activePiece = null;
+let activeGroup = [];
+let offsetX = 0;
+let offsetY = 0;
+let groupOffsets = new Map(); // グループ内各ピースの相対オフセット
+
+// パン状態
+let isSpacePressed = false;
+let isRightMousePressed = false;
+let panStartX = 0;
+let panStartY = 0;
+let panScrollStartX = 0;
+let panScrollStartY = 0;
+
+// DOM要素
+const workspace = document.getElementById('workspace');
+const piecesContainer = document.getElementById('pieces-container');
+const backgroundImg = document.getElementById('background-img');
+const completionOverlay = document.getElementById('completion-overlay');
+const tutorialModal = document.getElementById('tutorial-modal');
+const countdownOverlay = document.getElementById('countdown-overlay');
+const countdownNumber = document.getElementById('countdown-number');
+
+// 統計表示要素
+const completionRateEl = document.getElementById('completion-rate');
+const placedPiecesEl = document.getElementById('placed-pieces');
+const elapsedTimeEl = document.getElementById('elapsed-time');
+const progressFillEl = document.getElementById('progress-fill');
+const finalTimeEl = document.getElementById('final-time');
+
+// ========================================
+// 初期化
+// ========================================
+
+async function init() {
+  console.log('🎮 ゲームを初期化中...');
+
+  // 座標データを読み込む
+  try {
+    const response = await fetch('/data/coordinates.json');
+    gameState.coordinates = await response.json();
+    console.log(`✓ ${Object.keys(gameState.coordinates).length}個のピース座標を読み込みました`);
+  } catch (error) {
+    console.error('座標データの読み込みに失敗:', error);
+    alert('座標データの読み込みに失敗しました');
+    return;
+  }
+
+  // 背景画像のロードを待つ
+  await new Promise((resolve) => {
+    if (backgroundImg.complete) {
+      resolve();
+    } else {
+      backgroundImg.onload = resolve;
+    }
+  });
+
+  console.log(`✓ 背景画像サイズ: ${backgroundImg.naturalWidth}x${backgroundImg.naturalHeight}`);
+
+  // ワークスペースのサイズを設定
+  workspace.style.width = backgroundImg.naturalWidth + 2000 + 'px';
+  workspace.style.height = backgroundImg.naturalHeight + 2000 + 'px';
+
+  // 初期ズームを適用
+  applyZoom(gameState.currentScale);
+
+  // 隣接関係を計算
+  buildAdjacencyMap();
+
+  // ピースを作成
+  createPieces();
+
+  // イベントリスナーを設定
+  setupEventListeners();
+
+  // ピースをシャッフル
+  shufflePieces();
+
+  console.log('✅ 初期化完了！');
+}
+
+// ========================================
+// 隣接関係の計算
+// ========================================
+
+function buildAdjacencyMap() {
+  gameState.adjacencyMap.clear();
+
+  const pieces = Object.entries(gameState.coordinates)
+    .filter(([_, data]) => !data.error)
+    .map(([id, data]) => ({
+      id,
+      x: data.x,
+      y: data.y,
+      width: data.width,
+      height: data.height
+    }));
+
+  // 各ピースについて隣接するピースを検出
+  for (let i = 0; i < pieces.length; i++) {
+    const piece1 = pieces[i];
+    const neighbors = [];
+
+    for (let j = 0; j < pieces.length; j++) {
+      if (i === j) continue;
+
+      const piece2 = pieces[j];
+
+      // 矩形の重なりや隣接をチェック
+      if (isAdjacent(piece1, piece2)) {
+        neighbors.push(piece2.id);
+      }
+    }
+
+    gameState.adjacencyMap.set(piece1.id, neighbors);
+  }
+
+  console.log(`✓ 隣接関係を計算しました (${gameState.adjacencyMap.size}ピース)`);
+}
+
+function isAdjacent(piece1, piece2) {
+  const threshold = 5; // 隣接判定の閾値（ピクセル）
+
+  // 矩形の定義
+  const r1 = {
+    left: piece1.x,
+    right: piece1.x + piece1.width,
+    top: piece1.y,
+    bottom: piece1.y + piece1.height
+  };
+
+  const r2 = {
+    left: piece2.x,
+    right: piece2.x + piece2.width,
+    top: piece2.y,
+    bottom: piece2.y + piece2.height
+  };
+
+  // 縦方向の重なりチェック
+  const verticalOverlap = !(r1.bottom < r2.top || r1.top > r2.bottom);
+
+  // 横方向の重なりチェック
+  const horizontalOverlap = !(r1.right < r2.left || r1.left > r2.right);
+
+  // 隣接判定
+  // 左右に隣接
+  const adjacentHorizontal = verticalOverlap &&
+    (Math.abs(r1.right - r2.left) <= threshold || Math.abs(r1.left - r2.right) <= threshold);
+
+  // 上下に隣接
+  const adjacentVertical = horizontalOverlap &&
+    (Math.abs(r1.bottom - r2.top) <= threshold || Math.abs(r1.top - r2.bottom) <= threshold);
+
+  return adjacentHorizontal || adjacentVertical;
+}
+
+// ========================================
+// ピース作成
+// ========================================
+
+function createPieces() {
+  const pieceFiles = Object.keys(gameState.coordinates).sort();
+  const currentLevelConfig = LEVELS[gameState.currentLevel];
+
+  pieceFiles.forEach((filename, index) => {
+    const data = gameState.coordinates[filename];
+
+    // エラーのあるピースはスキップ
+    if (data.error) {
+      console.warn(`⚠ ${filename} はエラーがあるためスキップします`);
+      return;
+    }
+
+    const img = document.createElement('img');
+    img.src = currentLevelConfig.piecesDir + filename;
+    img.className = 'puzzle-piece';
+    img.dataset.id = filename;
+    img.dataset.correctX = data.x;
+    img.dataset.correctY = data.y;
+    img.draggable = false;
+
+    // 初期位置（後でシャッフルで変更）
+    img.style.left = data.x + 'px';
+    img.style.top = data.y + 'px';
+
+    piecesContainer.appendChild(img);
+    gameState.pieces.push(img);
+
+    // Union-Findに追加
+    gameState.unionFind.add(filename);
+
+    // ドラッグイベント
+    img.addEventListener('mousedown', startDrag);
+    img.addEventListener('touchstart', handleTouchStart, { passive: false });
+  });
+
+  console.log(`✓ ${gameState.pieces.length}個のピースを作成しました (Level ${gameState.currentLevel})`);
+  updateStats();
+}
+
+// ========================================
+// ドラッグ&ドロップ
+// ========================================
+
+function startDrag(e) {
+  e.preventDefault();
+
+  // パン中はピースドラッグを無効化
+  if (gameState.isPanning || isSpacePressed) {
+    return;
+  }
+
+  activePiece = e.target;
+
+  // ゲーム開始
+  if (!gameState.startTime) {
+    startTimer();
+  }
+
+  // グループを取得（ロック済みピースを含む）
+  const pieceId = activePiece.dataset.id;
+  const groupIds = gameState.unionFind.getGroup(pieceId);
+
+  // グループ内の全ピースを取得
+  activeGroup = gameState.pieces.filter(p => groupIds.includes(p.dataset.id));
+
+  // グループ全体を最前面に移動
+  activeGroup.forEach(piece => {
+    piece.style.zIndex = '1000';
+  });
+
+  const rect = activePiece.getBoundingClientRect();
+
+  offsetX = (e.clientX - rect.left) / gameState.currentScale;
+  offsetY = (e.clientY - rect.top) / gameState.currentScale;
+
+  // グループ内の各ピースの相対位置を記録
+  groupOffsets.clear();
+  const baseX = parseFloat(activePiece.style.left);
+  const baseY = parseFloat(activePiece.style.top);
+
+  activeGroup.forEach(piece => {
+    const pieceX = parseFloat(piece.style.left);
+    const pieceY = parseFloat(piece.style.top);
+    groupOffsets.set(piece.dataset.id, {
+      dx: pieceX - baseX,
+      dy: pieceY - baseY
+    });
+  });
+
+  gameState.isDragging = true;
+
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', endDrag);
+}
+
+function drag(e) {
+  if (!activePiece || !gameState.isDragging) return;
+  e.preventDefault();
+
+  const canvasRect = document.getElementById('puzzle-canvas').getBoundingClientRect();
+
+  // ワークスペース座標系での位置を計算
+  const scrollX = document.getElementById('puzzle-canvas').scrollLeft;
+  const scrollY = document.getElementById('puzzle-canvas').scrollTop;
+
+  const baseX = (e.clientX - canvasRect.left) / gameState.currentScale + scrollX - offsetX;
+  const baseY = (e.clientY - canvasRect.top) / gameState.currentScale + scrollY - offsetY;
+
+  // グループ内の全ピースを移動
+  activeGroup.forEach(piece => {
+    const offset = groupOffsets.get(piece.dataset.id);
+    piece.style.left = (baseX + offset.dx) + 'px';
+    piece.style.top = (baseY + offset.dy) + 'px';
+  });
+}
+
+function endDrag(e) {
+  if (!activePiece) return;
+
+  document.removeEventListener('mousemove', drag);
+  document.removeEventListener('mouseup', endDrag);
+
+  // グループ全体のスナップ判定
+  checkGroupSnap();
+
+  // グループ全体のzIndexを戻す
+  activeGroup.forEach(piece => {
+    piece.style.zIndex = '10';
+  });
+
+  activePiece = null;
+  activeGroup = [];
+  groupOffsets.clear();
+  gameState.isDragging = false;
+}
+
+// タッチ対応
+function handleTouchStart(e) {
+  e.preventDefault();
+  const touch = e.touches[0];
+  const mouseEvent = new MouseEvent('mousedown', {
+    clientX: touch.clientX,
+    clientY: touch.clientY
+  });
+  e.target.dispatchEvent(mouseEvent);
+}
+
+document.addEventListener('touchmove', (e) => {
+  if (!gameState.isDragging) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  const mouseEvent = new MouseEvent('mousemove', {
+    clientX: touch.clientX,
+    clientY: touch.clientY
+  });
+  document.dispatchEvent(mouseEvent);
+}, { passive: false });
+
+document.addEventListener('touchend', (e) => {
+  if (!gameState.isDragging) return;
+  const mouseEvent = new MouseEvent('mouseup', {});
+  document.dispatchEvent(mouseEvent);
+});
+
+// ========================================
+// スナップ判定
+// ========================================
+
+function checkGroupSnap() {
+  // グループ内のいずれかのピースが正しい位置にスナップできるかチェック
+  let anySnapped = false;
+
+  for (const piece of activeGroup) {
+    const currentX = parseFloat(piece.style.left);
+    const currentY = parseFloat(piece.style.top);
+    const correctX = parseFloat(piece.dataset.correctX);
+    const correctY = parseFloat(piece.dataset.correctY);
+
+    const distance = Math.sqrt(
+      Math.pow(currentX - correctX, 2) +
+      Math.pow(currentY - correctY, 2)
+    );
+
+    // スナップ距離内なら正しい位置に配置
+    if (distance < gameState.snapDistance) {
+      anySnapped = true;
+      break;
+    }
+  }
+
+  if (anySnapped) {
+    // グループ全体を正しい位置にスナップ
+    const deltaX = parseFloat(activeGroup[0].dataset.correctX) - parseFloat(activeGroup[0].style.left);
+    const deltaY = parseFloat(activeGroup[0].dataset.correctY) - parseFloat(activeGroup[0].style.top);
+
+    // 基準ピース（activeGroup[0]）を正しい位置に配置
+    const baseCorrectX = parseFloat(activeGroup[0].dataset.correctX);
+    const baseCorrectY = parseFloat(activeGroup[0].dataset.correctY);
+    const baseCurrentX = parseFloat(activeGroup[0].style.left);
+    const baseCurrentY = parseFloat(activeGroup[0].style.top);
+
+    activeGroup.forEach(piece => {
+      const offset = groupOffsets.get(piece.dataset.id);
+      piece.style.left = (baseCorrectX + offset.dx) + 'px';
+      piece.style.top = (baseCorrectY + offset.dy) + 'px';
+      piece.classList.add('snapping');
+
+      setTimeout(() => {
+        piece.classList.remove('snapping');
+      }, 300);
+
+      // 自動ロック
+      if (gameState.autoLock) {
+        lockPiece(piece);
+      }
+    });
+
+    // グループ内の各ピースについて、隣接する既にロック済みのピースとグループ化
+    activeGroup.forEach(piece => {
+      mergeWithAdjacentPieces(piece);
+    });
+
+    updateStats();
+    checkCompletion();
+  }
+}
+
+function checkSnap(piece) {
+  const currentX = parseFloat(piece.style.left);
+  const currentY = parseFloat(piece.style.top);
+  const correctX = parseFloat(piece.dataset.correctX);
+  const correctY = parseFloat(piece.dataset.correctY);
+
+  const distance = Math.sqrt(
+    Math.pow(currentX - correctX, 2) +
+    Math.pow(currentY - correctY, 2)
+  );
+
+  // スナップ距離内なら正しい位置に配置
+  if (distance < gameState.snapDistance) {
+    piece.style.left = correctX + 'px';
+    piece.style.top = correctY + 'px';
+    piece.classList.add('snapping');
+
+    setTimeout(() => {
+      piece.classList.remove('snapping');
+    }, 300);
+
+    // 自動ロック
+    if (gameState.autoLock) {
+      lockPiece(piece);
+    }
+
+    updateStats();
+    checkCompletion();
+  }
+}
+
+function lockPiece(piece) {
+  gameState.lockedPieces.add(piece.dataset.id);
+  piece.classList.add('locked');
+  piece.style.cursor = 'default';
+}
+
+function mergeWithAdjacentPieces(piece) {
+  const pieceId = piece.dataset.id;
+
+  // 正しい位置にあるかチェック
+  const currentX = parseFloat(piece.style.left);
+  const currentY = parseFloat(piece.style.top);
+  const correctX = parseFloat(piece.dataset.correctX);
+  const correctY = parseFloat(piece.dataset.correctY);
+
+  const distance = Math.sqrt(
+    Math.pow(currentX - correctX, 2) +
+    Math.pow(currentY - correctY, 2)
+  );
+
+  if (distance > 5) return; // 正しい位置にない場合は何もしない
+
+  // 隣接するピースを取得
+  const neighbors = gameState.adjacencyMap.get(pieceId) || [];
+
+  // 隣接するピースのうち、既にロック済みで正しい位置にあるものとグループ化
+  neighbors.forEach(neighborId => {
+    if (gameState.lockedPieces.has(neighborId)) {
+      const neighborPiece = gameState.pieces.find(p => p.dataset.id === neighborId);
+      if (neighborPiece) {
+        const nX = parseFloat(neighborPiece.style.left);
+        const nY = parseFloat(neighborPiece.style.top);
+        const nCorrectX = parseFloat(neighborPiece.dataset.correctX);
+        const nCorrectY = parseFloat(neighborPiece.dataset.correctY);
+
+        const nDist = Math.sqrt(
+          Math.pow(nX - nCorrectX, 2) +
+          Math.pow(nY - nCorrectY, 2)
+        );
+
+        // 隣接ピースも正しい位置にある場合のみグループ化
+        if (nDist <= 5) {
+          gameState.unionFind.union(pieceId, neighborId);
+          console.log(`🔗 ${pieceId} と ${neighborId} をグループ化しました`);
+        }
+      }
+    }
+  });
+}
+
+// ========================================
+// 統計更新
+// ========================================
+
+function updateStats() {
+  const total = gameState.pieces.length;
+  const placed = gameState.lockedPieces.size;
+  const percentage = Math.round((placed / total) * 100);
+
+  completionRateEl.textContent = percentage + '%';
+  placedPiecesEl.textContent = `${placed} / ${total}`;
+  progressFillEl.style.width = percentage + '%';
+}
+
+// ========================================
+// タイマー
+// ========================================
+
+function startTimer() {
+  gameState.startTime = Date.now();
+  gameState.timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+    const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+    const secs = (elapsed % 60).toString().padStart(2, '0');
+    elapsedTimeEl.textContent = `${mins}:${secs}`;
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(gameState.timerInterval);
+}
+
+// ========================================
+// 完成チェック
+// ========================================
+
+function checkCompletion() {
+  if (gameState.lockedPieces.size === gameState.pieces.length) {
+    stopTimer();
+    const finalTime = elapsedTimeEl.textContent;
+    finalTimeEl.textContent = finalTime;
+
+    setTimeout(() => {
+      completionOverlay.classList.add('show');
+    }, 500);
+  }
+}
+
+// ========================================
+// レベル切り替え
+// ========================================
+
+function changeLevel(level) {
+  if (gameState.currentLevel === level) return;
+
+  // 確認ダイアログ
+  if (gameState.lockedPieces.size > 0) {
+    if (!confirm('レベルを変更すると進行状況がリセットされます。よろしいですか？')) {
+      return;
+    }
+  }
+
+  gameState.currentLevel = level;
+
+  // 背景画像を変更
+  backgroundImg.src = LEVELS[level].backgroundImage;
+
+  // ピースをリセット
+  resetGame();
+
+  // UIを更新
+  updateLevelButtons();
+}
+
+function updateLevelButtons() {
+  document.querySelectorAll('.level-btn').forEach(btn => {
+    const level = parseInt(btn.dataset.level);
+    if (level === gameState.currentLevel) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+function resetGame() {
+  // ピースを削除
+  gameState.pieces.forEach(piece => piece.remove());
+  gameState.pieces = [];
+  gameState.lockedPieces.clear();
+
+  // Union-Findをリセット
+  gameState.unionFind.clear();
+
+  // タイマーリセット
+  stopTimer();
+  gameState.startTime = null;
+  elapsedTimeEl.textContent = '00:00';
+
+  // 完成オーバーレイを非表示
+  completionOverlay.classList.remove('show');
+
+  // ピースを再作成
+  createPieces();
+
+  // シャッフル
+  shufflePieces();
+}
+
+// ========================================
+// カウントダウンとアニメーション
+// ========================================
+
+async function startGameWithCountdown() {
+  // カウントダウンオーバーレイを表示
+  countdownOverlay.classList.add('show');
+
+  // 3, 2, 1のカウントダウン
+  for (let i = 3; i >= 1; i--) {
+    countdownNumber.textContent = i;
+    countdownNumber.style.animation = 'none';
+    // アニメーションをリセットするため少し待つ
+    await new Promise(resolve => setTimeout(resolve, 10));
+    countdownNumber.style.animation = 'countdownPulse 1s ease-out';
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
+  // カウントダウン終了
+  countdownOverlay.classList.remove('show');
+
+  // ピースをアニメーションでバラバラに
+  await animateScatterPieces();
+
+  // ゲーム開始（タイマーは最初のピースをドラッグした時に開始）
+}
+
+async function animateScatterPieces() {
+  const bgWidth = backgroundImg.naturalWidth;
+  const bgHeight = backgroundImg.naturalHeight;
+
+  // 各ピースのシャッフル位置を計算
+  const targetPositions = gameState.pieces.map(() => ({
+    x: bgWidth + 200 + Math.random() * 1500,
+    y: 100 + Math.random() * (bgHeight - 200)
+  }));
+
+  // トランジションを有効化
+  gameState.pieces.forEach((piece, index) => {
+    piece.style.transition = 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    piece.style.left = targetPositions[index].x + 'px';
+    piece.style.top = targetPositions[index].y + 'px';
+  });
+
+  // アニメーション完了を待つ
+  await new Promise(resolve => setTimeout(resolve, 1500));
+
+  // トランジションを解除
+  gameState.pieces.forEach(piece => {
+    piece.style.transition = '';
+  });
+}
+
+// ========================================
+// シャッフル
+// ========================================
+
+function shufflePieces() {
+  const bgWidth = backgroundImg.naturalWidth;
+  const bgHeight = backgroundImg.naturalHeight;
+
+  // ロック解除とUnion-Findリセット（ループの外で一度だけ実行）
+  gameState.lockedPieces.clear();
+  gameState.unionFind.clear();
+
+  gameState.pieces.forEach(p => {
+    gameState.unionFind.add(p.dataset.id);
+  });
+
+  gameState.pieces.forEach((piece, index) => {
+    // ロック解除
+    piece.classList.remove('locked');
+
+    // ランダム配置（背景の右側エリア）
+    const randomX = bgWidth + 200 + Math.random() * 1500;
+    const randomY = 100 + Math.random() * (bgHeight - 200);
+
+    piece.style.left = randomX + 'px';
+    piece.style.top = randomY + 'px';
+    piece.style.zIndex = '10';
+  });
+
+  // タイマーリセット
+  stopTimer();
+  gameState.startTime = null;
+  elapsedTimeEl.textContent = '00:00';
+
+  updateStats();
+  completionOverlay.classList.remove('show');
+}
+
+// ========================================
+// ズームコントロール
+// ========================================
+
+function applyZoom(scale) {
+  gameState.currentScale = Math.max(0.1, Math.min(1, scale));
+  workspace.style.transform = `scale(${gameState.currentScale})`;
+  document.getElementById('zoom-display').textContent = Math.round(gameState.currentScale * 100) + '%';
+}
+
+// ========================================
+// イベントリスナー
+// ========================================
+
+function setupEventListeners() {
+  // レベル選択ボタン
+  document.querySelectorAll('.level-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const level = parseInt(btn.dataset.level);
+      changeLevel(level);
+    });
+  });
+
+  // シャッフルボタン
+  document.getElementById('shuffle-btn').addEventListener('click', shufflePieces);
+
+  // リセットボタン
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (confirm('進行状況がリセットされます。よろしいですか？')) {
+      shufflePieces();
+    }
+  });
+
+  // ヒントボタン - 押している間カラー版を表示
+  const hintBtn = document.getElementById('hint-btn');
+  let originalBackgroundSrc = '';
+
+  hintBtn.addEventListener('mousedown', () => {
+    originalBackgroundSrc = backgroundImg.src;
+    backgroundImg.src = '/img/愛知県全図color.png';
+  });
+
+  hintBtn.addEventListener('mouseup', () => {
+    backgroundImg.src = originalBackgroundSrc;
+  });
+
+  hintBtn.addEventListener('mouseleave', () => {
+    if (originalBackgroundSrc) {
+      backgroundImg.src = originalBackgroundSrc;
+    }
+  });
+
+  // もう一度遊ぶ
+  document.getElementById('play-again-btn').addEventListener('click', () => {
+    completionOverlay.classList.remove('show');
+    shufflePieces();
+  });
+
+  // ズームコントロール（サイドバー）
+  document.getElementById('zoom-in-sidebar').addEventListener('click', () => {
+    applyZoom(gameState.currentScale + 0.1);
+  });
+
+  document.getElementById('zoom-out-sidebar').addEventListener('click', () => {
+    applyZoom(gameState.currentScale - 0.1);
+  });
+
+  // 設定
+  document.getElementById('auto-lock').addEventListener('change', (e) => {
+    gameState.autoLock = e.target.checked;
+  });
+
+  // マウスホイールでズーム（Ctrl+ホイール、または右クリック+ホイール）
+  document.getElementById('puzzle-canvas').addEventListener('wheel', (e) => {
+    if (e.ctrlKey || isRightMousePressed) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.05 : 0.05;
+      applyZoom(gameState.currentScale + delta);
+    }
+  }, { passive: false });
+
+  // パン機能 - スペースキー検出
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && !gameState.isDragging) {
+      isSpacePressed = true;
+      document.getElementById('puzzle-canvas').style.cursor = 'grab';
+    }
+  });
+
+  document.addEventListener('keyup', (e) => {
+    if (e.code === 'Space') {
+      isSpacePressed = false;
+      if (!gameState.isPanning) {
+        document.getElementById('puzzle-canvas').style.cursor = 'auto';
+      }
+    }
+  });
+
+  // パン機能 - マウス操作
+  const puzzleCanvas = document.getElementById('puzzle-canvas');
+
+  puzzleCanvas.addEventListener('mousedown', (e) => {
+    // 右クリックの状態を記録
+    if (e.button === 2) {
+      isRightMousePressed = true;
+    }
+
+    // 左クリック（空白部分）、スペース+左クリック、中ボタン、右クリックでパン開始
+    const isEmptyArea = e.target === puzzleCanvas || e.target === workspace;
+    if ((e.button === 0 && (isSpacePressed || isEmptyArea)) || e.button === 1 || e.button === 2) {
+      e.preventDefault();
+      gameState.isPanning = true;
+      panStartX = e.clientX;
+      panStartY = e.clientY;
+      panScrollStartX = puzzleCanvas.scrollLeft;
+      panScrollStartY = puzzleCanvas.scrollTop;
+      puzzleCanvas.style.cursor = 'grabbing';
+    }
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (gameState.isPanning) {
+      e.preventDefault();
+      const deltaX = e.clientX - panStartX;
+      const deltaY = e.clientY - panStartY;
+      puzzleCanvas.scrollLeft = panScrollStartX - deltaX;
+      puzzleCanvas.scrollTop = panScrollStartY - deltaY;
+    }
+  });
+
+  document.addEventListener('mouseup', (e) => {
+    // 右クリックの状態をリセット
+    if (e.button === 2) {
+      isRightMousePressed = false;
+    }
+
+    if (gameState.isPanning) {
+      gameState.isPanning = false;
+      puzzleCanvas.style.cursor = isSpacePressed ? 'grab' : 'auto';
+    }
+  });
+
+  // 中ボタンと右クリックのデフォルト動作を無効化
+  puzzleCanvas.addEventListener('auxclick', (e) => {
+    if (e.button === 1) {
+      e.preventDefault();
+    }
+  });
+
+  puzzleCanvas.addEventListener('contextmenu', (e) => {
+    e.preventDefault(); // 右クリックメニューを無効化
+  });
+
+  // チュートリアルモーダル - レベルカードのクリック
+  document.querySelectorAll('.level-card[data-tutorial-level]').forEach(card => {
+    card.addEventListener('click', async () => {
+      const level = parseInt(card.dataset.tutorialLevel);
+
+      // モーダルを閉じる
+      tutorialModal.classList.add('hidden');
+
+      // レベルを設定
+      gameState.currentLevel = level;
+      backgroundImg.src = LEVELS[level].backgroundImage;
+      updateLevelButtons();
+
+      // ピースを正しい位置に配置（ロックなし）
+      gameState.pieces.forEach(piece => {
+        const correctX = parseFloat(piece.dataset.correctX);
+        const correctY = parseFloat(piece.dataset.correctY);
+        piece.style.left = correctX + 'px';
+        piece.style.top = correctY + 'px';
+        piece.classList.remove('locked');
+      });
+
+      gameState.lockedPieces.clear();
+      gameState.unionFind.clear();
+      gameState.pieces.forEach(p => gameState.unionFind.add(p.dataset.id));
+
+      // カウントダウンとアニメーション開始
+      await startGameWithCountdown();
+
+      updateStats();
+    });
+  });
+}
+
+// ========================================
+// ゲーム開始
+// ========================================
+
+init();

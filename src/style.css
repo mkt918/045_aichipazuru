@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased overflow-x-hidden;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.puzzle-tile {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.puzzle-tile:hover {
+  filter: brightness(1.2);
+  z-index: 1;
+}
+
+.difficulty-btn.active {
+  @apply bg-aichi-blue border-aichi-gold text-aichi-gold shadow-[0_0_15px_#d4af3766];
+}

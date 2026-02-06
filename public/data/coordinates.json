@@ -1,0 +1,522 @@
+{
+  "color_city_01.png": {
+    "x": 1875,
+    "y": 570,
+    "width": 319,
+    "height": 344,
+    "matchScore": 98.43,
+    "error": false
+  },
+  "color_city_02.png": {
+    "x": 1920,
+    "y": 795,
+    "width": 661,
+    "height": 491,
+    "matchScore": 99.63,
+    "error": false
+  },
+  "color_city_03.png": {
+    "x": 1755,
+    "y": 555,
+    "width": 352,
+    "height": 372,
+    "matchScore": 98.8,
+    "error": false
+  },
+  "color_city_04.png": {
+    "x": 1920,
+    "y": 555,
+    "width": 139,
+    "height": 194,
+    "matchScore": 94.99,
+    "error": false
+  },
+  "color_city_05.png": {
+    "x": 1845,
+    "y": 555,
+    "width": 222,
+    "height": 275,
+    "matchScore": 97.52,
+    "error": false
+  },
+  "color_city_06.png": {
+    "x": 1860,
+    "y": 615,
+    "width": 553,
+    "height": 515,
+    "matchScore": 99.42,
+    "error": false
+  },
+  "color_city_07.png": {
+    "x": 1905,
+    "y": 570,
+    "width": 256,
+    "height": 261,
+    "matchScore": 97.1,
+    "error": false
+  },
+  "color_city_08.png": {
+    "x": 1485,
+    "y": 735,
+    "width": 869,
+    "height": 868,
+    "matchScore": 99.53,
+    "error": false
+  },
+  "color_city_09.png": {
+    "x": 1209,
+    "y": 539,
+    "width": 1748,
+    "height": 1185,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_10.png": {
+    "x": 1650,
+    "y": 660,
+    "width": 525,
+    "height": 322,
+    "matchScore": 99.09,
+    "error": false
+  },
+  "color_city_11.png": {
+    "x": 735,
+    "y": 480,
+    "width": 152,
+    "height": 147,
+    "matchScore": 93.24,
+    "error": false
+  },
+  "color_city_12.png": {
+    "x": 1125,
+    "y": 2757,
+    "width": 1054,
+    "height": 598,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_13.png": {
+    "x": 2400,
+    "y": 1485,
+    "width": 438,
+    "height": 411,
+    "matchScore": 98.45,
+    "error": false
+  },
+  "color_city_14.png": {
+    "x": 2595,
+    "y": 1485,
+    "width": 351,
+    "height": 307,
+    "matchScore": 98.73,
+    "error": false
+  },
+  "color_city_15.png": {
+    "x": 2400,
+    "y": 1515,
+    "width": 372,
+    "height": 480,
+    "matchScore": 99.19,
+    "error": false
+  },
+  "color_city_16.png": {
+    "x": 2460,
+    "y": 1485,
+    "width": 309,
+    "height": 310,
+    "matchScore": 98.47,
+    "error": false
+  },
+  "color_city_17.png": {
+    "x": 2460,
+    "y": 1485,
+    "width": 274,
+    "height": 297,
+    "matchScore": 98.27,
+    "error": false
+  },
+  "color_city_18.png": {
+    "x": 2325,
+    "y": 1403,
+    "width": 1046,
+    "height": 969,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_19.png": {
+    "x": 270,
+    "y": 270,
+    "width": 220,
+    "height": 221,
+    "matchScore": 95.45,
+    "error": false
+  },
+  "color_city_20.png": {
+    "x": 2475,
+    "y": 1470,
+    "width": 337,
+    "height": 461,
+    "matchScore": 98.56,
+    "error": false
+  },
+  "color_city_21.png": {
+    "x": 300,
+    "y": 270,
+    "width": 252,
+    "height": 154,
+    "matchScore": 96.34,
+    "error": false
+  },
+  "color_city_22.png": {
+    "x": 2490,
+    "y": 1485,
+    "width": 274,
+    "height": 275,
+    "matchScore": 97.79,
+    "error": false
+  },
+  "color_city_23.png": {
+    "x": 915,
+    "y": 105,
+    "width": 94,
+    "height": 110,
+    "matchScore": 96.57,
+    "error": false
+  },
+  "color_city_24.png": {
+    "x": 2381,
+    "y": 1514,
+    "width": 554,
+    "height": 470,
+    "matchScore": 99.24,
+    "error": false
+  },
+  "color_city_25.png": {
+    "x": 2460,
+    "y": 1455,
+    "width": 427,
+    "height": 442,
+    "matchScore": 99.3,
+    "error": false
+  },
+  "color_city_26.png": {
+    "x": 2820,
+    "y": 945,
+    "width": 206,
+    "height": 262,
+    "matchScore": 96.87,
+    "error": false
+  },
+  "color_city_27.png": {
+    "x": 2865,
+    "y": 855,
+    "width": 279,
+    "height": 451,
+    "matchScore": 97.91,
+    "error": false
+  },
+  "color_city_28.png": {
+    "x": 2985,
+    "y": 870,
+    "width": 212,
+    "height": 204,
+    "matchScore": 96.35,
+    "error": false
+  },
+  "color_city_29.png": {
+    "x": 870,
+    "y": 585,
+    "width": 218,
+    "height": 163,
+    "matchScore": 96.2,
+    "error": false
+  },
+  "color_city_30.png": {
+    "x": 1412,
+    "y": 1530,
+    "width": 1026,
+    "height": 709,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_31.png": {
+    "x": 2970,
+    "y": 855,
+    "width": 225,
+    "height": 266,
+    "matchScore": 96.22,
+    "error": false
+  },
+  "color_city_32.png": {
+    "x": 3000,
+    "y": 885,
+    "width": 238,
+    "height": 187,
+    "matchScore": 94.94,
+    "error": false
+  },
+  "color_city_33.png": {
+    "x": 2865,
+    "y": 885,
+    "width": 273,
+    "height": 350,
+    "matchScore": 98.08,
+    "error": false
+  },
+  "color_city_34.png": {
+    "x": 1155,
+    "y": 405,
+    "width": 105,
+    "height": 129,
+    "matchScore": 93.53,
+    "error": false
+  },
+  "color_city_35.png": {
+    "x": 2472,
+    "y": 832,
+    "width": 802,
+    "height": 791,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_36.png": {
+    "x": 1590,
+    "y": 1575,
+    "width": 330,
+    "height": 471,
+    "matchScore": 98.86,
+    "error": false
+  },
+  "color_city_37.png": {
+    "x": 855,
+    "y": 585,
+    "width": 210,
+    "height": 214,
+    "matchScore": 95.14,
+    "error": false
+  },
+  "color_city_38.png": {
+    "x": 1155,
+    "y": 375,
+    "width": 180,
+    "height": 279,
+    "matchScore": 95.82,
+    "error": false
+  },
+  "color_city_39.png": {
+    "x": 1140,
+    "y": 360,
+    "width": 135,
+    "height": 168,
+    "matchScore": 97.99,
+    "error": false
+  },
+  "color_city_40.png": {
+    "x": 1755,
+    "y": 1680,
+    "width": 557,
+    "height": 485,
+    "matchScore": 99.1,
+    "error": false
+  },
+  "color_city_41.png": {
+    "x": 885,
+    "y": 570,
+    "width": 191,
+    "height": 207,
+    "matchScore": 95.82,
+    "error": false
+  },
+  "color_city_42.png": {
+    "x": 2235,
+    "y": 2490,
+    "width": 387,
+    "height": 274,
+    "matchScore": 97.26,
+    "error": false
+  },
+  "color_city_43.png": {
+    "x": 2069,
+    "y": 2243,
+    "width": 631,
+    "height": 843,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_44.png": {
+    "x": 982,
+    "y": 2036,
+    "width": 647,
+    "height": 541,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_45.png": {
+    "x": 2400,
+    "y": 2460,
+    "width": 225,
+    "height": 511,
+    "matchScore": 98.64,
+    "error": false
+  },
+  "color_city_46.png": {
+    "x": 2220,
+    "y": 2475,
+    "width": 288,
+    "height": 473,
+    "matchScore": 99.17,
+    "error": false
+  },
+  "color_city_47.png": {
+    "x": 2325,
+    "y": 2445,
+    "width": 284,
+    "height": 383,
+    "matchScore": 98.33,
+    "error": false
+  },
+  "color_city_48.png": {
+    "x": 1335,
+    "y": 555,
+    "width": 121,
+    "height": 222,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_49.png": {
+    "x": 3240,
+    "y": 825,
+    "width": 313,
+    "height": 234,
+    "matchScore": 98.13,
+    "error": false
+  },
+  "color_city_50.png": {
+    "x": 3196,
+    "y": 761,
+    "width": 594,
+    "height": 552,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_51.png": {
+    "x": 1335,
+    "y": 555,
+    "width": 208,
+    "height": 158,
+    "matchScore": 94.13,
+    "error": false
+  },
+  "color_city_52.png": {
+    "x": 2135,
+    "y": 2724,
+    "width": 512,
+    "height": 324,
+    "matchScore": 98.89,
+    "error": false
+  },
+  "color_city_53.png": {
+    "x": 2167,
+    "y": 2511,
+    "width": 447,
+    "height": 481,
+    "matchScore": 99.39,
+    "error": false
+  },
+  "color_city_54.png": {
+    "x": 3210,
+    "y": 795,
+    "width": 211,
+    "height": 308,
+    "matchScore": 97.93,
+    "error": false
+  },
+  "color_city_55.png": {
+    "x": 465,
+    "y": 1500,
+    "width": 37,
+    "height": 68,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_56.png": {
+    "x": 465,
+    "y": 1500,
+    "width": 51,
+    "height": 30,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_57.png": {
+    "x": 459,
+    "y": 1498,
+    "width": 70,
+    "height": 67,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_58.png": {
+    "x": 465,
+    "y": 1500,
+    "width": 33,
+    "height": 55,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_59.png": {
+    "x": 465,
+    "y": 1500,
+    "width": 36,
+    "height": 39,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_60.png": {
+    "x": 422,
+    "y": 2176,
+    "width": 81,
+    "height": 150,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_61.png": {
+    "x": 465,
+    "y": 1500,
+    "width": 41,
+    "height": 51,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_62.png": {
+    "x": 461,
+    "y": 1502,
+    "width": 65,
+    "height": 79,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_63.png": {
+    "x": 458,
+    "y": 1498,
+    "width": 91,
+    "height": 89,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_64.png": {
+    "x": 465,
+    "y": 1500,
+    "width": 51,
+    "height": 80,
+    "matchScore": 100,
+    "error": false
+  },
+  "color_city_65.png": {
+    "x": 465,
+    "y": 1500,
+    "width": 51,
+    "height": 84,
+    "matchScore": 100,
+    "error": false
+  }
+}
