@@ -108,12 +108,13 @@ const gameState = {
   timerInterval: null,
   isDragging: false,
   coordinates: null,
-  snapDistance: 200,
+  snapDistance: 20,
   autoLock: true,
   currentLevel: 1,
   unionFind: new UnionFind(),
   adjacencyMap: new Map(), // 隣接関係マップ
-  isPanning: false // パン中かどうか
+  isPanning: false, // パン中かどうか
+  adminMode: new URLSearchParams(window.location.search).has('admin') // 管理者モード
 };
 
 // ドラッグ状態
@@ -387,8 +388,13 @@ function drag(e) {
   const workspaceOffsetX = workspace.offsetLeft;
   const workspaceOffsetY = workspace.offsetTop;
 
-  const baseX = (e.clientX - canvasRect.left + scrollX - workspaceOffsetX) / gameState.currentScale - offsetX;
-  const baseY = (e.clientY - canvasRect.top + scrollY - workspaceOffsetY) / gameState.currentScale - offsetY;
+  // 正しい座標変換：
+  // 1. マウス位置をキャンバス内の表示位置に変換
+  // 2. スケールで割ってワークスペース座標系に変換
+  // 3. スクロール量を加算（すでにワークスペース座標系）
+  // 4. ワークスペースのオフセットを引く
+  const baseX = (e.clientX - canvasRect.left) / gameState.currentScale + scrollX - workspaceOffsetX - offsetX;
+  const baseY = (e.clientY - canvasRect.top) / gameState.currentScale + scrollY - workspaceOffsetY - offsetY;
 
   // グループ内の全ピースを移動
   activeGroup.forEach(piece => {
@@ -451,8 +457,14 @@ document.addEventListener('touchend', (e) => {
 // ========================================
 
 function checkGroupSnap() {
+  // 管理者モードではスナップしない
+  if (gameState.adminMode) return;
+
   // グループ内のいずれかのピースが正しい位置にスナップできるかチェック
   let anySnapped = false;
+
+  // スケールに応じてスナップ距離を調整（画面上で一定の距離を維持）
+  const effectiveSnapDistance = gameState.snapDistance / gameState.currentScale;
 
   for (const piece of activeGroup) {
     const currentX = parseFloat(piece.style.left);
@@ -466,7 +478,7 @@ function checkGroupSnap() {
     );
 
     // スナップ距離内なら正しい位置に配置
-    if (distance < gameState.snapDistance) {
+    if (distance < effectiveSnapDistance) {
       anySnapped = true;
       break;
     }
@@ -510,6 +522,9 @@ function checkGroupSnap() {
 }
 
 function checkSnap(piece) {
+  // 管理者モードではスナップしない
+  if (gameState.adminMode) return;
+
   const currentX = parseFloat(piece.style.left);
   const currentY = parseFloat(piece.style.top);
   const correctX = parseFloat(piece.dataset.correctX);
@@ -520,8 +535,11 @@ function checkSnap(piece) {
     Math.pow(currentY - correctY, 2)
   );
 
+  // スケールに応じてスナップ距離を調整（画面上で一定の距離を維持）
+  const effectiveSnapDistance = gameState.snapDistance / gameState.currentScale;
+
   // スナップ距離内なら正しい位置に配置
-  if (distance < gameState.snapDistance) {
+  if (distance < effectiveSnapDistance) {
     piece.style.left = correctX + 'px';
     piece.style.top = correctY + 'px';
     piece.classList.add('snapping');
@@ -772,12 +790,20 @@ function shufflePieces() {
     // ロック解除
     piece.classList.remove('locked');
 
-    // ランダム配置（背景の右側エリア）
-    const randomX = bgWidth + 200 + Math.random() * 1500;
-    const randomY = 100 + Math.random() * (bgHeight - 200);
+    // 管理者モードでは正しい位置に配置（背景画像上）
+    if (gameState.adminMode) {
+      const correctX = parseFloat(piece.dataset.correctX);
+      const correctY = parseFloat(piece.dataset.correctY);
+      piece.style.left = correctX + 'px';
+      piece.style.top = correctY + 'px';
+    } else {
+      // 通常モード: ランダム配置（背景の右側エリア）
+      const randomX = bgWidth + 200 + Math.random() * 1500;
+      const randomY = 100 + Math.random() * (bgHeight - 200);
 
-    piece.style.left = randomX + 'px';
-    piece.style.top = randomY + 'px';
+      piece.style.left = randomX + 'px';
+      piece.style.top = randomY + 'px';
+    }
     piece.style.zIndex = '10';
   });
 
@@ -978,7 +1004,171 @@ function setupEventListeners() {
 }
 
 // ========================================
+// 管理者モード
+// ========================================
+
+function setupAdminMode() {
+  if (!gameState.adminMode) return;
+
+  console.log('🔧 管理者モードが有効です');
+
+  // 背景画像を明るく表示
+  if (backgroundImg) {
+    backgroundImg.style.opacity = '0.8';
+  }
+
+  // スナップを無効化
+  gameState.autoLock = false;
+
+  // 管理者パネルを表示
+  const adminPanel = document.createElement('div');
+  adminPanel.id = 'admin-panel';
+  adminPanel.style.cssText = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    color: #0f0;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: monospace;
+    z-index: 10000;
+    max-width: 400px;
+  `;
+  adminPanel.innerHTML = `
+    <h3 style="margin: 0 0 15px 0; color: #0f0;">🔧 管理者モード</h3>
+    <p style="margin: 5px 0; font-size: 12px;">ピースを正しい位置に配置してください</p>
+    <div id="admin-stats" style="margin: 10px 0; font-size: 11px;"></div>
+    <button id="export-coords" style="
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #0a0;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    ">座標データを出力 (Ctrl+S)</button>
+    <button id="copy-coords" style="
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      background: #00a;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    ">座標をクリップボードにコピー</button>
+    <div id="admin-output" style="
+      margin-top: 10px;
+      padding: 10px;
+      background: #111;
+      border-radius: 4px;
+      font-size: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    "></div>
+  `;
+  document.body.appendChild(adminPanel);
+
+  // 統計更新
+  function updateAdminStats() {
+    const statsEl = document.getElementById('admin-stats');
+    if (statsEl) {
+      statsEl.innerHTML = `
+        <div>配置済みピース: ${gameState.pieces.length}個</div>
+        <div style="color: #ff0;">ヒント: Ctrl+S で座標出力</div>
+      `;
+    }
+  }
+
+  updateAdminStats();
+
+  // 座標出力関数
+  function exportCoordinates() {
+    const coords = {};
+    gameState.pieces.forEach(piece => {
+      const filename = piece.dataset.id;
+      coords[filename] = {
+        x: Math.round(parseFloat(piece.style.left)),
+        y: Math.round(parseFloat(piece.style.top)),
+        width: piece.naturalWidth,
+        height: piece.naturalHeight,
+        matchScore: 100,
+        error: false
+      };
+    });
+
+    const json = JSON.stringify(coords, null, 2);
+    console.log('📊 座標データ:');
+    console.log(json);
+
+    // 出力表示
+    const outputEl = document.getElementById('admin-output');
+    if (outputEl) {
+      outputEl.style.display = 'block';
+      outputEl.textContent = json;
+    }
+
+    // ダウンロード
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'coordinates.json';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    alert('✅ 座標データをダウンロードしました！\nコンソールにも出力されています。');
+  }
+
+  // クリップボードにコピー
+  function copyToClipboard() {
+    const coords = {};
+    gameState.pieces.forEach(piece => {
+      const filename = piece.dataset.id;
+      coords[filename] = {
+        x: Math.round(parseFloat(piece.style.left)),
+        y: Math.round(parseFloat(piece.style.top)),
+        width: piece.naturalWidth,
+        height: piece.naturalHeight,
+        matchScore: 100,
+        error: false
+      };
+    });
+
+    const json = JSON.stringify(coords, null, 2);
+    navigator.clipboard.writeText(json).then(() => {
+      alert('✅ 座標データをクリップボードにコピーしました！');
+    });
+  }
+
+  // ボタンイベント
+  document.getElementById('export-coords').addEventListener('click', exportCoordinates);
+  document.getElementById('copy-coords').addEventListener('click', copyToClipboard);
+
+  // キーボードショートカット (Ctrl+S)
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 's') {
+      e.preventDefault();
+      exportCoordinates();
+    }
+  });
+
+  console.log('✅ 管理者モードの設定が完了しました');
+  console.log('💡 使い方:');
+  console.log('  1. ピースを背景画像の正しい位置にドラッグ');
+  console.log('  2. すべて配置したら Ctrl+S で座標を出力');
+  console.log('  3. ダウンロードされたファイルを public/data/coordinates.json に置き換え');
+}
+
+// ========================================
 // ゲーム開始
 // ========================================
 
-init();
+init().then(() => {
+  setupAdminMode();
+});
