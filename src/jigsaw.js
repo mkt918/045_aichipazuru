@@ -419,8 +419,12 @@ function startDrag(e) {
       if (data) {
         infoName.textContent = data.name;
         infoDescription.textContent = data.description;
-        infoPanel.classList.remove('hidden');
-        infoPanel.classList.add('flex'); // 必要に応じて flex など
+        // サイドバー統合版では常に表示されているため、hidden制御は不要か、
+        // 視覚的なフィードバック（ハイライトなど）を追加する
+        infoPanel.classList.add('ring-2', 'ring-aichi-gold');
+        setTimeout(() => {
+          infoPanel.classList.remove('ring-2', 'ring-aichi-gold');
+        }, 500);
       }
     }
   }

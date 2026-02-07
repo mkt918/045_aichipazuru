@@ -4,7 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>愛知県ジグソーパズル - Aichi Jigsaw Puzzle</title>
+    <title>愛知県ジグソーパズル | Aichi Prefecture Jigsaw</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Outfit:wght@400;600;700;900&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="src/style.css">
     <style>
         body {
@@ -115,93 +122,12 @@
         /* サイドバー */
         #sidebar {
             width: 320px;
-            background: rgba(26, 26, 46, 0.95);
-            backdrop-filter: blur(10px);
-            border-left: 2px solid #4a4a6a;
-            display: flex;
-            flex-direction: column;
-            color: white;
-            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
-        }
-
-        #sidebar-header {
-            padding: 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-bottom: 2px solid #4a4a6a;
-        }
-
-        #sidebar-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #aaa;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #fff;
-            font-family: 'Courier New', monospace;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
         }
 
         .level-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: 2px solid rgba(255, 255, 255, 0.4);
+            background: rgba(245, 158, 11, 0.2) !important;
+            border-color: rgba(245, 158, 11, 0.5) !important;
+            color: rgb(251, 191, 36) !important;
         }
 
         /* プログレスバー */
@@ -496,104 +422,108 @@
                         <div id="pieces-container"></div>
                     </div>
                 </div>
-
-                <!-- 市町村情報パネル (画面下部に固定) -->
-                <div id="info-panel"
-                    class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[2000] w-full max-w-2xl px-4 transition-all duration-300 pointer-events-none">
-                    <div id="info-content"
-                        class="bg-black/70 backdrop-blur-lg text-white p-5 rounded-2xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto animate-fade-in">
-                        <div class="flex items-center gap-3 mb-2">
-                            <div class="w-2 h-6 bg-aichi-gold rounded-full"></div>
-                            <h3 id="info-name" class="text-2xl font-bold text-aichi-gold">市町村名</h3>
-                        </div>
-                        <p id="info-description" class="text-base leading-relaxed opacity-90">ここに解説が表示されます。</p>
-                    </div>
-                </div>
             </div>
         </div>
 
         <!-- サイドバー -->
-        <div id="sidebar">
-            <div id="sidebar-header">
-                <h1 style="font-size: 28px; margin: 0 0 8px 0; font-weight: bold;">愛知パズル</h1>
-                <p style="margin: 0; opacity: 0.9; font-size: 14px;">Aichi Jigsaw Puzzle</p>
+        <div id="sidebar" class="w-80 flex flex-col h-full bg-slate-900/95 backdrop-blur-xl border-l border-slate-700/50 text-white">
+            <!-- ヘッダー -->
+            <div class="px-6 py-5 border-b border-slate-700/50">
+                <h1 class="text-2xl font-bold text-white">愛知パズル</h1>
+                <p class="text-xs text-slate-400 mt-1">Aichi Jigsaw Puzzle</p>
             </div>
 
-            <div id="sidebar-content">
+            <div id="sidebar-content" class="flex-1 overflow-y-auto p-5 space-y-5">
+                <!-- 進捗 -->
+                <div class="bg-slate-800/50 rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs text-slate-400 font-medium">進捗</span>
+                        <span class="text-2xl font-bold" id="completion-rate">0%</span>
+                    </div>
+                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                        <div id="progress-fill" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
                 <!-- 統計 -->
-                <div class="stat-card">
-                    <div class="stat-label">完成率</div>
-                    <div class="stat-value" id="completion-rate">0%</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-800/50 rounded-xl p-4">
+                        <span class="text-xs text-slate-400 block mb-1">ピース</span>
+                        <span class="text-lg font-bold" id="placed-pieces">0/65</span>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-4">
+                        <span class="text-xs text-slate-400 block mb-1">時間</span>
+                        <span class="text-lg font-bold font-mono" id="elapsed-time">00:00</span>
                     </div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-label">配置済みピース</div>
-                    <div class="stat-value" id="placed-pieces">0 / 65</div>
+                <!-- 市町村情報 -->
+                <div id="info-panel" class="bg-slate-800/50 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-2 h-2 bg-amber-400 rounded-full"></div>
+                        <span class="text-xs text-slate-400 font-medium">選択中のエリア</span>
+                    </div>
+                    <h3 id="info-name" class="text-xl font-bold mb-2">市町村を選択</h3>
+                    <p id="info-description" class="text-sm text-slate-400 leading-relaxed">
+                        ピースをドラッグすると、その地域の情報が表示されます。
+                    </p>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-label">経過時間</div>
-                    <div class="stat-value" id="elapsed-time">00:00</div>
-                </div>
-
-                <!-- レベル選択 -->
-                <div style="margin-top: 32px;">
-                    <div class="stat-label" style="margin-bottom: 12px;">レベル選択</div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <button class="btn btn-secondary level-btn active" data-level="1"
-                            style="padding: 12px; margin: 0;">
-                            Level 1<br><span style="font-size: 11px; opacity: 0.7;">カラー</span>
+                <!-- 難易度選択 -->
+                <div>
+                    <span class="text-xs text-slate-400 font-medium block mb-3">難易度</span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="level-btn active py-3 px-4 bg-amber-500/20 border border-amber-500/50 rounded-lg text-sm font-medium text-amber-400 transition-all hover:bg-amber-500/30" data-level="1">
+                            Lv.1 カラー
                         </button>
-                        <button class="btn btn-secondary level-btn" data-level="2" style="padding: 12px; margin: 0;">
-                            Level 2<br><span style="font-size: 11px; opacity: 0.7;">グレー</span>
+                        <button class="level-btn py-3 px-4 bg-slate-800/50 border border-slate-700/50 rounded-lg text-sm font-medium text-slate-300 transition-all hover:bg-slate-700/50" data-level="2">
+                            Lv.2 モノクロ
                         </button>
-                        <button class="btn btn-secondary level-btn" data-level="3" style="padding: 12px; margin: 0;">
-                            Level 3<br><span style="font-size: 11px; opacity: 0.7;">ハード</span>
+                        <button class="level-btn py-3 px-4 bg-slate-800/50 border border-slate-700/50 rounded-lg text-sm font-medium text-slate-300 transition-all hover:bg-slate-700/50" data-level="3">
+                            Lv.3 ハード
                         </button>
-                        <button class="btn btn-secondary level-btn" data-level="4" style="padding: 12px; margin: 0;">
-                            Level EX<br><span style="font-size: 11px; opacity: 0.7;">エクストラ</span>
+                        <button class="level-btn py-3 px-4 bg-slate-800/50 border border-slate-700/50 rounded-lg text-sm font-medium text-slate-300 transition-all hover:bg-slate-700/50" data-level="4">
+                            Lv.EX 激ムズ
                         </button>
                     </div>
-                </div>
-
-                <!-- コントロール -->
-                <div style="margin-top: 24px;">
-                    <button class="btn btn-primary" id="shuffle-btn">シャッフル</button>
-                    <button class="btn btn-secondary" id="hint-btn">ヒント表示</button>
-                    <button class="btn btn-secondary" id="reset-btn">リセット</button>
-                </div>
-
-                <!-- ズームコントロール -->
-                <div style="margin-top: 32px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px;">
-                    <div class="stat-label" style="margin-bottom: 12px;">ズーム調整</div>
-
-                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                        <button class="btn btn-secondary" id="zoom-in-sidebar"
-                            style="flex: 1; padding: 14px; margin: 0; font-size: 20px;">+</button>
-                        <button class="btn btn-secondary" id="zoom-out-sidebar"
-                            style="flex: 1; padding: 14px; margin: 0; font-size: 20px;">−</button>
-                    </div>
-
-                    <div style="text-align: center; font-size: 24px; font-weight: bold; color: #667eea; font-family: 'Courier New', monospace;"
-                        id="zoom-display">30%</div>
                 </div>
 
                 <!-- 設定 -->
-                <div style="margin-top: 24px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px;">
-                    <div class="stat-label" style="margin-bottom: 12px;">設定</div>
-
-                    <label style="display: flex; align-items: center; margin-bottom: 12px; cursor: pointer;">
-                        <input type="checkbox" id="auto-lock" checked
-                            style="margin-right: 8px; width: 18px; height: 18px;">
-                        <span style="font-size: 14px;">自動ロック</span>
-                    </label>
-
-                    <div style="font-size: 14px; color: #aaa;">
-                        スナップ距離: 50px（固定）
+                <div class="bg-slate-800/50 rounded-xl p-4 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-slate-300">ズーム</span>
+                        <span id="zoom-display" class="text-sm font-bold text-amber-400">30%</span>
                     </div>
+                    <div class="flex gap-2">
+                        <button id="zoom-out-sidebar" class="flex-1 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg transition-all text-lg">−</button>
+                        <button id="zoom-in-sidebar" class="flex-1 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg transition-all text-lg">+</button>
+                    </div>
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-700/50">
+                        <span class="text-sm text-slate-300">自動スナップ</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="auto-lock" class="sr-only peer" checked>
+                            <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:bg-amber-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="p-5 border-t border-slate-700/50 space-y-3">
+                <button id="shuffle-btn" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                        <path d="M21 3v5h-5"/>
+                    </svg>
+                    シャッフル開始
+                </button>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="hint-btn" class="py-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-sm font-medium transition-all">
+                        ヒント
+                    </button>
+                    <button id="reset-btn" class="py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-all">
+                        リセット
+                    </button>
                 </div>
             </div>
         </div>

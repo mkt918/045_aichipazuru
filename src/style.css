@@ -4,8 +4,13 @@
 
 @layer base {
   body {
-    @apply antialiased overflow-x-hidden;
+    @apply antialiased overflow-x-hidden text-white font-sans;
+    font-family: 'Noto Sans JP', sans-serif;
   }
+}
+
+.font-outfit {
+  font-family: 'Outfit', sans-serif;
 }
 
 @keyframes fadeIn {
@@ -36,6 +41,71 @@
   z-index: 1;
 }
 
-.difficulty-btn.active {
-  @apply bg-aichi-blue border-aichi-gold text-aichi-gold shadow-[0_0_15px_#d4af3766];
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-white/20;
+  }
+
+  /* Glassmorphism utility */
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0, 0, 0, 0.3)];
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+  }
+}
+
+.level-btn.active {
+  @apply bg-aichi-gold/10 border-aichi-gold text-aichi-gold glow-gold;
+}
+
+.level-btn:hover:not(.active) {
+  @apply bg-white/10 border-white/20;
+}
+
+/* 既存CSSの微調整 */
+#game-container {
+  @apply flex h-screen w-screen overflow-hidden bg-[#000510];
+}
+
+#sidebar {
+  @apply w-[420px] shrink-0;
+}
+
+#sidebar-content {
+  scrollbar-gutter: stable;
+}
+
+#puzzle-area {
+  @apply flex-1 relative overflow-hidden bg-[radial-gradient(circle_at_center, _#001a3d_0%, _#000510_100%)];
+}
+
+/* アニメーション */
+@keyframes pulse-gold {
+
+  0%,
+  100% {
+    border-color: rgba(212, 175, 55, 0.3);
+  }
+
+  50% {
+    border-color: rgba(212, 175, 55, 0.8);
+  }
+}
+
+#info-panel.ring-aichi-gold {
+  animation: pulse-gold 0.5s ease-in-out;
 }
