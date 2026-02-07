@@ -148,7 +148,8 @@ const countdownNumber = document.getElementById('countdown-number');
 const completionRateEl = document.getElementById('completion-rate');
 const placedPiecesEl = document.getElementById('placed-pieces');
 const elapsedTimeEl = document.getElementById('elapsed-time');
-const progressFillEl = document.getElementById('progress-fill');
+const progressCircleEl = document.getElementById('progress-circle');
+const zoomFillEl = document.getElementById('zoom-fill');
 const finalTimeEl = document.getElementById('final-time');
 const infoPanel = document.getElementById('info-panel');
 const infoName = document.getElementById('info-name');
@@ -715,8 +716,14 @@ function updateStats() {
   const percentage = Math.round((placed / total) * 100);
 
   completionRateEl.textContent = percentage + '%';
-  placedPiecesEl.textContent = `${placed} / ${total}`;
-  progressFillEl.style.width = percentage + '%';
+  placedPiecesEl.textContent = `${placed}/${total}`;
+
+  // 円形プログレスバー更新（stroke-dashoffset）
+  const circumference = 264; // stroke-dasharray の値
+  const offset = circumference - (circumference * percentage / 100);
+  if (progressCircleEl) {
+    progressCircleEl.style.strokeDashoffset = offset;
+  }
 }
 
 // ========================================
@@ -744,13 +751,54 @@ function stopTimer() {
 function checkCompletion() {
   if (gameState.lockedPieces.size === gameState.pieces.length) {
     stopTimer();
+    const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
     const finalTime = elapsedTimeEl.textContent;
-    finalTimeEl.textContent = finalTime;
+
+    // ランク計算
+    const rank = calculateRank(elapsed, gameState.currentLevel);
+
+    // 表示更新
+    document.getElementById('final-time').textContent = finalTime;
+    document.getElementById('final-level').textContent = `Level ${gameState.currentLevel}`;
+
+    const rankBadge = document.querySelector('.rank-badge');
+    const rankLabel = document.querySelector('.rank-label');
+
+    rankBadge.textContent = rank.grade;
+    rankBadge.className = `rank-badge rank-${rank.grade.toLowerCase()}`;
+    rankLabel.textContent = rank.message;
 
     setTimeout(() => {
       completionOverlay.classList.add('show');
     }, 500);
   }
+}
+
+// ランク計算関数
+function calculateRank(seconds, level) {
+  // 難易度別の基準時間（秒）
+  const timeThresholds = {
+    1: { S: 120, A: 180, B: 300, C: 600 },      // Level 1: 2分/3分/5分/10分
+    2: { S: 180, A: 300, B: 480, C: 720 },      // Level 2: 3分/5分/8分/12分
+    3: { S: 240, A: 360, B: 600, C: 900 },      // Level 3: 4分/6分/10分/15分
+    4: { S: 300, A: 480, B: 720, C: 1080 }      // Level 4: 5分/8分/12分/18分
+  };
+
+  const thresholds = timeThresholds[level] || timeThresholds[1];
+
+  const ranks = {
+    S: { grade: 'S', message: '神業！驚異的な速さです！' },
+    A: { grade: 'A', message: '素晴らしい！とても速いです！' },
+    B: { grade: 'B', message: 'お見事！良いペースです！' },
+    C: { grade: 'C', message: '完成おめでとう！' },
+    D: { grade: 'D', message: 'よく頑張りました！' }
+  };
+
+  if (seconds <= thresholds.S) return ranks.S;
+  if (seconds <= thresholds.A) return ranks.A;
+  if (seconds <= thresholds.B) return ranks.B;
+  if (seconds <= thresholds.C) return ranks.C;
+  return ranks.D;
 }
 
 // ========================================
@@ -780,7 +828,7 @@ function changeLevel(level) {
 }
 
 function updateLevelButtons() {
-  document.querySelectorAll('.level-btn').forEach(btn => {
+  document.querySelectorAll('.level-tab').forEach(btn => {
     const level = parseInt(btn.dataset.level);
     if (level === gameState.currentLevel) {
       btn.classList.add('active');
@@ -920,7 +968,11 @@ function shufflePieces() {
 function applyZoom(scale) {
   gameState.currentScale = Math.max(0.1, Math.min(1, scale));
   workspace.style.transform = `scale(${gameState.currentScale})`;
-  document.getElementById('zoom-display').textContent = Math.round(gameState.currentScale * 100) + '%';
+  const percentage = Math.round(gameState.currentScale * 100);
+  document.getElementById('zoom-display').textContent = percentage + '%';
+  if (zoomFillEl) {
+    zoomFillEl.style.width = percentage + '%';
+  }
 }
 
 // ========================================
@@ -929,7 +981,7 @@ function applyZoom(scale) {
 
 function setupEventListeners() {
   // レベル選択ボタン
-  document.querySelectorAll('.level-btn').forEach(btn => {
+  document.querySelectorAll('.level-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       const level = parseInt(btn.dataset.level);
       changeLevel(level);

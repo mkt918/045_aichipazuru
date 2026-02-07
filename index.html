@@ -119,15 +119,372 @@
             }
         }
 
-        /* サイドバー */
+        /* ========== 新サイドバー ========== */
         #sidebar {
-            width: 320px;
+            width: 340px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(255,255,255,0.08);
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
-        .level-btn.active {
-            background: rgba(245, 158, 11, 0.2) !important;
-            border-color: rgba(245, 158, 11, 0.5) !important;
-            color: rgb(251, 191, 36) !important;
+        /* ロゴエリア */
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: #0f172a;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .logo-main {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .logo-sub {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* メインコンテンツ */
+        .sidebar-main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* 進捗サークル */
+        .progress-circle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .progress-circle {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+        .progress-circle svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+        .progress-bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.08);
+            stroke-width: 8;
+        }
+        .progress-bar-circle {
+            fill: none;
+            stroke: url(#progressGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.8s ease;
+        }
+        .progress-inner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-percent {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+        .progress-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 4px;
+        }
+        .stats-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stat-icon {
+            font-size: 16px;
+        }
+        .stat-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .stat-divider {
+            width: 1px;
+            height: 16px;
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* 情報カード */
+        .info-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 16px;
+            transition: all 0.3s;
+        }
+        .info-card:hover {
+            background: rgba(255,255,255,0.06);
+        }
+        .info-header {
+            margin-bottom: 10px;
+        }
+        .info-badge {
+            font-size: 11px;
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.15);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .info-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+        .info-desc {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* セクション */
+        .section-block {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* 難易度タブ */
+        .level-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .level-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .level-tab:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .level-tab.active {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: #f59e0b;
+        }
+        .level-num {
+            font-size: 16px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.8);
+        }
+        .level-tab.active .level-num {
+            color: #f59e0b;
+        }
+        .level-name {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+        }
+        .level-tab.active .level-name {
+            color: #f59e0b;
+        }
+        .level-num, .level-name {
+            pointer-events: none;
+        }
+
+        /* ズームコントロール */
+        .zoom-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.08);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        .zoom-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .zoom-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            border-radius: 3px;
+            transition: width 0.2s;
+        }
+        .zoom-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f59e0b;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* トグル */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            cursor: pointer;
+        }
+        .toggle-row span:first-child {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+        }
+        .toggle-row input {
+            display: none;
+        }
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.2s;
+        }
+        .toggle-row input:checked + .toggle-switch {
+            background: #f59e0b;
+        }
+        .toggle-row input:checked + .toggle-switch::after {
+            left: 23px;
+        }
+
+        /* フッターボタン */
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn-secondary, .btn-danger {
+            padding: 12px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .btn-danger {
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.3);
+            background: rgba(248, 113, 113, 0.08);
+        }
+        .btn-danger:hover {
+            background: rgba(248, 113, 113, 0.15);
+        }
+
+        /* スクロールバー */
+        .sidebar-main::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-main::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-main::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
         }
 
         /* プログレスバー */
@@ -205,8 +562,88 @@
         }
 
         .completion-stats {
-            font-size: 24px;
             margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .rank-display {
+            margin: 30px 0;
+            animation: rankPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes rankPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .rank-badge {
+            font-size: 120px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+
+        .rank-badge.rank-s {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+        }
+
+        .rank-badge.rank-a {
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(192, 192, 192, 0.6));
+        }
+
+        .rank-badge.rank-b {
+            background: linear-gradient(135deg, #cd7f32, #e8a87c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(205, 127, 50, 0.6));
+        }
+
+        .rank-badge.rank-c {
+            color: #90caf9;
+            filter: drop-shadow(0 0 10px rgba(144, 202, 249, 0.5));
+        }
+
+        .rank-badge.rank-d {
+            color: #b0b0b0;
+        }
+
+        .rank-label {
+            font-size: 24px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            min-width: 400px;
+        }
+
+        .stat-label-comp {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .stat-value-comp {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
         }
 
         /* ズームコントロール */
@@ -331,6 +768,9 @@
             color: #bbb;
             line-height: 1.5;
         }
+        .level-card-title, .level-card-desc {
+            pointer-events: none;
+        }
 
         .control-item {
             background: rgba(255, 255, 255, 0.05);
@@ -412,6 +852,15 @@
 </head>
 
 <body>
+    <!-- SVGグラデーション定義 -->
+    <svg width="0" height="0" style="position:absolute">
+        <defs>
+            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#f59e0b"/>
+                <stop offset="100%" style="stop-color:#fbbf24"/>
+            </linearGradient>
+        </defs>
+    </svg>
     <div id="game-container">
         <!-- パズルエリア -->
         <div id="puzzle-area">
@@ -426,104 +875,103 @@
         </div>
 
         <!-- サイドバー -->
-        <div id="sidebar" class="w-80 flex flex-col h-full bg-slate-900/95 backdrop-blur-xl border-l border-slate-700/50 text-white">
-            <!-- ヘッダー -->
-            <div class="px-6 py-5 border-b border-slate-700/50">
-                <h1 class="text-2xl font-bold text-white">愛知パズル</h1>
-                <p class="text-xs text-slate-400 mt-1">Aichi Jigsaw Puzzle</p>
+        <div id="sidebar">
+            <!-- ロゴエリア -->
+            <div class="sidebar-logo">
+                <div class="logo-icon">愛</div>
+                <div class="logo-text">
+                    <span class="logo-main">愛知パズル</span>
+                    <span class="logo-sub">65市町村を完成させよう</span>
+                </div>
             </div>
 
-            <div id="sidebar-content" class="flex-1 overflow-y-auto p-5 space-y-5">
-                <!-- 進捗 -->
-                <div class="bg-slate-800/50 rounded-xl p-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-xs text-slate-400 font-medium">進捗</span>
-                        <span class="text-2xl font-bold" id="completion-rate">0%</span>
+            <!-- メインコンテンツ -->
+            <div class="sidebar-main">
+                <!-- 進捗サークル -->
+                <div class="progress-circle-container">
+                    <div class="progress-circle">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="progress-bg" cx="50" cy="50" r="42"/>
+                            <circle class="progress-bar-circle" id="progress-circle" cx="50" cy="50" r="42"
+                                stroke-dasharray="264" stroke-dashoffset="264"/>
+                        </svg>
+                        <div class="progress-inner">
+                            <span class="progress-percent" id="completion-rate">0%</span>
+                            <span class="progress-label">完成</span>
+                        </div>
                     </div>
-                    <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
-                        <div id="progress-fill" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <!-- 統計 -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-slate-800/50 rounded-xl p-4">
-                        <span class="text-xs text-slate-400 block mb-1">ピース</span>
-                        <span class="text-lg font-bold" id="placed-pieces">0/65</span>
-                    </div>
-                    <div class="bg-slate-800/50 rounded-xl p-4">
-                        <span class="text-xs text-slate-400 block mb-1">時間</span>
-                        <span class="text-lg font-bold font-mono" id="elapsed-time">00:00</span>
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <span class="stat-icon">🧩</span>
+                            <span class="stat-value" id="placed-pieces">0/65</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-icon">⏱️</span>
+                            <span class="stat-value" id="elapsed-time">00:00</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- 市町村情報 -->
-                <div id="info-panel" class="bg-slate-800/50 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-2 h-2 bg-amber-400 rounded-full"></div>
-                        <span class="text-xs text-slate-400 font-medium">選択中のエリア</span>
+                <div class="info-card" id="info-panel">
+                    <div class="info-header">
+                        <span class="info-badge">📍 選択中</span>
                     </div>
-                    <h3 id="info-name" class="text-xl font-bold mb-2">市町村を選択</h3>
-                    <p id="info-description" class="text-sm text-slate-400 leading-relaxed">
-                        ピースをドラッグすると、その地域の情報が表示されます。
-                    </p>
+                    <h3 class="info-title" id="info-name">ピースを選択してください</h3>
+                    <p class="info-desc" id="info-description">ドラッグ中のピースの市町村情報がここに表示されます</p>
                 </div>
 
-                <!-- 難易度選択 -->
-                <div>
-                    <span class="text-xs text-slate-400 font-medium block mb-3">難易度</span>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button class="level-btn active py-3 px-4 bg-amber-500/20 border border-amber-500/50 rounded-lg text-sm font-medium text-amber-400 transition-all hover:bg-amber-500/30" data-level="1">
-                            Lv.1 カラー
+                <!-- 難易度 -->
+                <div class="section-block">
+                    <div class="section-title">難易度</div>
+                    <div class="level-tabs">
+                        <button class="level-tab active" data-level="1">
+                            <span class="level-num">1</span>
+                            <span class="level-name">カラー</span>
                         </button>
-                        <button class="level-btn py-3 px-4 bg-slate-800/50 border border-slate-700/50 rounded-lg text-sm font-medium text-slate-300 transition-all hover:bg-slate-700/50" data-level="2">
-                            Lv.2 モノクロ
+                        <button class="level-tab" data-level="2">
+                            <span class="level-num">2</span>
+                            <span class="level-name">モノクロ</span>
                         </button>
-                        <button class="level-btn py-3 px-4 bg-slate-800/50 border border-slate-700/50 rounded-lg text-sm font-medium text-slate-300 transition-all hover:bg-slate-700/50" data-level="3">
-                            Lv.3 ハード
+                        <button class="level-tab" data-level="3">
+                            <span class="level-num">3</span>
+                            <span class="level-name">ハード</span>
                         </button>
-                        <button class="level-btn py-3 px-4 bg-slate-800/50 border border-slate-700/50 rounded-lg text-sm font-medium text-slate-300 transition-all hover:bg-slate-700/50" data-level="4">
-                            Lv.EX 激ムズ
+                        <button class="level-tab" data-level="4">
+                            <span class="level-num">EX</span>
+                            <span class="level-name">激ムズ</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- 設定 -->
-                <div class="bg-slate-800/50 rounded-xl p-4 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-slate-300">ズーム</span>
-                        <span id="zoom-display" class="text-sm font-bold text-amber-400">30%</span>
+                <!-- 操作 -->
+                <div class="section-block">
+                    <div class="section-title">表示</div>
+                    <div class="zoom-control">
+                        <button id="zoom-out-sidebar" class="zoom-btn">−</button>
+                        <div class="zoom-bar">
+                            <div class="zoom-fill" id="zoom-fill" style="width: 30%"></div>
+                        </div>
+                        <button id="zoom-in-sidebar" class="zoom-btn">+</button>
+                        <span class="zoom-value" id="zoom-display">30%</span>
                     </div>
-                    <div class="flex gap-2">
-                        <button id="zoom-out-sidebar" class="flex-1 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg transition-all text-lg">−</button>
-                        <button id="zoom-in-sidebar" class="flex-1 py-2 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg transition-all text-lg">+</button>
-                    </div>
-                    <div class="flex items-center justify-between pt-2 border-t border-slate-700/50">
-                        <span class="text-sm text-slate-300">自動スナップ</span>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="auto-lock" class="sr-only peer" checked>
-                            <div class="w-10 h-5 bg-slate-700 rounded-full peer peer-checked:bg-amber-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
-                        </label>
-                    </div>
+                    <label class="toggle-row">
+                        <span>自動スナップ</span>
+                        <input type="checkbox" id="auto-lock" checked>
+                        <span class="toggle-switch"></span>
+                    </label>
                 </div>
             </div>
 
             <!-- アクションボタン -->
-            <div class="p-5 border-t border-slate-700/50 space-y-3">
-                <button id="shuffle-btn" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
-                        <path d="M21 3v5h-5"/>
-                    </svg>
-                    シャッフル開始
+            <div class="sidebar-footer">
+                <button id="shuffle-btn" class="btn-primary">
+                    ▶ スタート
                 </button>
-                <div class="grid grid-cols-2 gap-2">
-                    <button id="hint-btn" class="py-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-sm font-medium transition-all">
-                        ヒント
-                    </button>
-                    <button id="reset-btn" class="py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-all">
-                        リセット
-                    </button>
+                <div class="btn-row">
+                    <button id="hint-btn" class="btn-secondary">💡 ヒント</button>
+                    <button id="reset-btn" class="btn-danger">↺ リセット</button>
                 </div>
             </div>
         </div>
@@ -533,8 +981,19 @@
     <div id="completion-overlay">
         <div class="completion-content">
             <div class="completion-title">🎉 完成！ 🎉</div>
+            <div class="rank-display" id="rank-display">
+                <div class="rank-badge">S</div>
+                <div class="rank-label">素晴らしい！</div>
+            </div>
             <div class="completion-stats">
-                <div>完成時間: <span id="final-time"></span></div>
+                <div class="stat-row">
+                    <span class="stat-label-comp">⏱️ 完成時間</span>
+                    <span class="stat-value-comp" id="final-time">00:00</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label-comp">📊 難易度</span>
+                    <span class="stat-value-comp" id="final-level">Level 1</span>
+                </div>
             </div>
             <button class="btn btn-primary" id="play-again-btn" style="width: 300px; margin: 0 auto;">もう一度遊ぶ</button>
         </div>
