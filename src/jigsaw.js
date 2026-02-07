@@ -919,6 +919,53 @@ async function animateScatterPieces() {
 // シャッフル
 // ========================================
 
+// ========================================
+// 未配置ピースを整理
+// ========================================
+
+function gatherUnplacedPieces() {
+  const bgWidth = backgroundImg.naturalWidth;
+  const bgHeight = backgroundImg.naturalHeight;
+
+  // 未配置のピース（ロックされていないピース）を取得
+  const unplacedPieces = gameState.pieces.filter(
+    piece => !gameState.lockedPieces.has(piece.dataset.id)
+  );
+
+  if (unplacedPieces.length === 0) {
+    console.log('すべてのピースが配置済みです');
+    return;
+  }
+
+  console.log(`📦 ${unplacedPieces.length}個の未配置ピースを整理します`);
+
+  // 整理エリアの設定（背景の右側）
+  const startX = bgWidth + 100;
+  const startY = 50;
+  const columnWidth = 120; // 列の幅
+  const rowHeight = 100;   // 行の高さ
+  const maxColumns = 8;    // 最大列数
+
+  // ピースをグリッド状に配置
+  unplacedPieces.forEach((piece, index) => {
+    const col = index % maxColumns;
+    const row = Math.floor(index / maxColumns);
+
+    const targetX = startX + col * columnWidth;
+    const targetY = startY + row * rowHeight;
+
+    // アニメーション付きで移動
+    piece.style.transition = 'all 0.5s ease-out';
+    piece.style.left = targetX + 'px';
+    piece.style.top = targetY + 'px';
+
+    // アニメーション終了後にトランジションを解除
+    setTimeout(() => {
+      piece.style.transition = '';
+    }, 500);
+  });
+}
+
 function shufflePieces() {
   const bgWidth = backgroundImg.naturalWidth;
   const bgHeight = backgroundImg.naturalHeight;
@@ -997,6 +1044,9 @@ function setupEventListeners() {
       shufflePieces();
     }
   });
+
+  // 整理ボタン
+  document.getElementById('gather-btn').addEventListener('click', gatherUnplacedPieces);
 
   // ヒントボタン - 押している間カラー版を表示
   const hintBtn = document.getElementById('hint-btn');
