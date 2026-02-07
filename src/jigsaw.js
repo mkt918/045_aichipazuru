@@ -79,23 +79,23 @@ class UnionFind {
 const LEVELS = {
   1: {
     name: 'カラー',
-    backgroundImage: '/img/愛知県全図color.png',
-    piecesDir: '/color_cities/'
+    backgroundImage: 'img/愛知県全図color.png',
+    piecesDir: 'color_cities/'
   },
   2: {
     name: 'グレー',
-    backgroundImage: '/img/愛知県全図.png',
-    piecesDir: '/color_cities/' // ピースは同じ
+    backgroundImage: 'img/愛知県全図.png',
+    piecesDir: 'color_cities/' // ピースは同じ
   },
   3: {
     name: 'ハード',
-    backgroundImage: '/img/hard.png',
-    piecesDir: '/color_cities/' // ピースは同じ
+    backgroundImage: 'img/hard.png',
+    piecesDir: 'color_cities/' // ピースは同じ
   },
   4: {
     name: 'エクストラ',
-    backgroundImage: '/img/Ex.png',
-    piecesDir: '/color_cities/' // ピースは同じ
+    backgroundImage: 'img/Ex.png',
+    piecesDir: 'color_cities/' // ピースは同じ
   }
 };
 
@@ -114,6 +114,9 @@ const gameState = {
   unionFind: new UnionFind(),
   adjacencyMap: new Map(), // 隣接関係マップ
   isPanning: false, // パン中かどうか
+  isAdmin: false,
+  coordinates: null,
+  cityData: {}, // 市町村情報 (id -> {name, description})
   adminMode: new URLSearchParams(window.location.search).has('admin') // 管理者モード
 };
 
@@ -147,6 +150,59 @@ const placedPiecesEl = document.getElementById('placed-pieces');
 const elapsedTimeEl = document.getElementById('elapsed-time');
 const progressFillEl = document.getElementById('progress-fill');
 const finalTimeEl = document.getElementById('final-time');
+const infoPanel = document.getElementById('info-panel');
+const infoName = document.getElementById('info-name');
+const infoDescription = document.getElementById('info-description');
+
+// ========================================
+// ヘルパー: フォールバック付きフェッチ
+// ========================================
+
+async function smartFetch(url) {
+  // そのまま試行
+  let response = await fetch(url);
+  if (response.ok) return response;
+
+  // 404の場合、public/ プレフィックスを付けて再試行 (Live Server等への対応)
+  if (response.status === 404 && !url.startsWith('public/')) {
+    const fallbackUrl = 'public/' + url;
+    console.log(`⚠️ 404: 別のパスを試行中... -> ${fallbackUrl}`);
+    response = await fetch(fallbackUrl);
+    if (response.ok) return response;
+  }
+
+  throw new Error(`Failed to fetch ${url} (Status: ${response.status})`);
+}
+
+/**
+ * 市町村情報を読み込む
+ */
+async function loadCityData() {
+  try {
+    const response = await smartFetch('data/cities.csv');
+    const text = await response.text();
+    const lines = text.split('\n');
+
+    // ヘッダーを飛ばして各行を処理
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+
+      // CSVのパース (簡易版: カンマで分割。ダブルクォートなどは考慮しない)
+      const parts = line.split(',');
+      if (parts.length >= 2) {
+        const id = parts[0].trim();
+        const name = parts[1].trim();
+        const description = parts.slice(2).join(',').trim(); // 残りは全て説明
+
+        gameState.cityData[id] = { name, description };
+      }
+    }
+    console.log(`✓ ${Object.keys(gameState.cityData).length}件の市町村情報を読み込みました`);
+  } catch (error) {
+    console.error('市町村情報の読み込みに失敗:', error);
+  }
+}
 
 // ========================================
 // 初期化
@@ -157,12 +213,15 @@ async function init() {
 
   // 座標データを読み込む
   try {
-    const response = await fetch('/data/coordinates.json');
+    const response = await smartFetch('data/coordinates.json');
     gameState.coordinates = await response.json();
     console.log(`✓ ${Object.keys(gameState.coordinates).length}個のピース座標を読み込みました`);
+
+    // 市町村情報を読み込む
+    await loadCityData();
   } catch (error) {
-    console.error('座標データの読み込みに失敗:', error);
-    alert('座標データの読み込みに失敗しました');
+    console.error('❌ データの読み込みに失敗:', error);
+    alert(`データの読み込みに失敗しました。\n環境設定を確認してください。\nError: ${error.message}`);
     return;
   }
 
@@ -292,12 +351,30 @@ function createPieces() {
     }
 
     const img = document.createElement('img');
-    img.src = currentLevelConfig.piecesDir + filename;
+    const pieceUrl = currentLevelConfig.piecesDir + filename;
+
+    // ピース画像のURLも環境に合わせて調整（Live Server対応）
+    // imgタグのsrcによる非同期ロードへの対応として、まず存在を確認
+    smartFetch(pieceUrl).then(resp => {
+      img.src = resp.url; // 解決されたURL（フォールバック済みかもしれない）を使用
+    }).catch(() => {
+      img.src = pieceUrl; // 失敗しても元のパスを設定（ブラウザのデフォルト挙動に任せる）
+    });
+
     img.className = 'puzzle-piece';
     img.dataset.id = filename;
     img.dataset.correctX = data.x;
     img.dataset.correctY = data.y;
     img.draggable = false;
+
+    // 面積が小さいほど z-index を高く設定する (ユーザー要望: 掴む優先度)
+    // 65ピースあるので、一旦大きな範囲で設定
+    const area = data.width * data.height;
+    // 基準となる面積（例: 50x50=2500）よりどのくらい小さいか
+    // 最大面積を10000程度と想定し、z-indexを10〜100の間で振る
+    const sizeZIndex = Math.max(10, Math.min(100, Math.floor(100000 / area)));
+    img.style.zIndex = sizeZIndex;
+    img.dataset.baseZIndex = sizeZIndex;
 
     // 初期位置（後でシャッフルで変更）
     img.style.left = data.x + 'px';
@@ -331,6 +408,22 @@ function startDrag(e) {
   }
 
   activePiece = e.target;
+
+  // 市町村情報を表示
+  const filename = activePiece.dataset.id;
+  if (filename) {
+    const cityIdMatch = filename.match(/(\d+)/);
+    if (cityIdMatch) {
+      const cityId = cityIdMatch[0];
+      const data = gameState.cityData[cityId];
+      if (data) {
+        infoName.textContent = data.name;
+        infoDescription.textContent = data.description;
+        infoPanel.classList.remove('hidden');
+        infoPanel.classList.add('flex'); // 必要に応じて flex など
+      }
+    }
+  }
 
   // ゲーム開始
   if (!gameState.startTime) {
@@ -415,7 +508,7 @@ function endDrag(e) {
 
   // グループ全体のzIndexを戻す
   activeGroup.forEach(piece => {
-    piece.style.zIndex = '10';
+    piece.style.zIndex = piece.dataset.baseZIndex || '10';
   });
 
   activePiece = null;

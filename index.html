@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>愛知県ジグソーパズル - Aichi Jigsaw Puzzle</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="src/style.css">
     <style>
         body {
             margin: 0;
@@ -492,8 +492,21 @@
             <div id="canvas-wrapper">
                 <div id="puzzle-canvas">
                     <div id="workspace">
-                        <img id="background-img" src="/img/愛知県全図color.png" alt="背景">
+                        <img id="background-img" src="img/愛知県全図color.png" alt="背景">
                         <div id="pieces-container"></div>
+                    </div>
+                </div>
+
+                <!-- 市町村情報パネル (画面下部に固定) -->
+                <div id="info-panel"
+                    class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[2000] w-full max-w-2xl px-4 transition-all duration-300 pointer-events-none">
+                    <div id="info-content"
+                        class="bg-black/70 backdrop-blur-lg text-white p-5 rounded-2xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] pointer-events-auto animate-fade-in">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-2 h-6 bg-aichi-gold rounded-full"></div>
+                            <h3 id="info-name" class="text-2xl font-bold text-aichi-gold">市町村名</h3>
+                        </div>
+                        <p id="info-description" class="text-base leading-relaxed opacity-90">ここに解説が表示されます。</p>
                     </div>
                 </div>
             </div>
@@ -717,7 +730,7 @@
         </div>
     </div>
 
-    <script type="module" src="/src/jigsaw.js"></script>
+    <script type="module" src="src/jigsaw.js"></script>
 </body>
 
 </html>

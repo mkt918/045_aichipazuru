@@ -74,7 +74,7 @@
 <body>
     <div id="canvas-container">
         <div id="workspace">
-            <img id="map-layer" src="/public/img/aichi_color_map.png" alt="Base Map" draggable="false">
+            <img id="map-layer" src="img/aichi_color_map.png" alt="Base Map" draggable="false">
             <div id="pieces-layer"></div>
         </div>
     </div>
@@ -121,20 +121,23 @@
         // Load existing coordinates if available
         let savedCoords = {};
         try {
-            const resp = await fetch('/public/data/coordinates.json');
+            const dataUrl = 'data/coordinates.json';
+            const resp = await fetch(dataUrl);
             if (resp.ok) {
                 savedCoords = await resp.json();
                 log('Loaded existing coordinates.');
+            } else {
+                log(`Failed to load coordinates: ${resp.status}`);
             }
         } catch (e) {
-            log('No existing coordinates found.');
+            log(`No existing coordinates found or error: ${e.message}`);
         }
 
         // Initialize Pieces
         for (let i = 1; i <= CITY_COUNT; i++) {
             const id = `color_city_${String(i).padStart(2, '0')}.png`;
             const img = document.createElement('img');
-            img.src = `/public/img/cities/${id}`;
+            img.src = `img/cities/${id}`;
             img.className = 'city-piece';
             img.id = id;
             img.dataset.id = id;
